@@ -3,11 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Platform
-  - Enemy
-  - EnemyMovementCollider
-  - Projectile
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -18,7 +14,7 @@ TagManager:
   - 
   - 
   - 
-  - GTerrain
+  - 
   - 
   - 
   - 
@@ -44,21 +40,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Background
-    uniqueID: 2190235337
-    locked: 0
-  - name: Terrain
-    uniqueID: 3347248923
-    locked: 0
-  - name: Walls
-    uniqueID: 2380493001
-    locked: 0
-<<<<<<< HEAD
-  - name: Enemies
-    uniqueID: 2839289827
-=======
-  - name: Objects
-    uniqueID: 4282899155
->>>>>>> 304e8b064f61113d0275154f02ef333a3b96447b
     locked: 0

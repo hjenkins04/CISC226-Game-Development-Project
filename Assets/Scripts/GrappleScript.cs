@@ -30,7 +30,7 @@ public class GrappleScript : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Clicked");
+            //Debug.Log("Clicked");
             shoot();
         }
         else if(Input.GetMouseButtonUp(0))
@@ -49,7 +49,7 @@ public class GrappleScript : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(player.transform.position, direction.up, GrappleDistance, Grappleable);
         if (hit.collider != null)
         {
-            Debug.Log("Hit");
+            //Debug.Log("Hit");
             
             grapplePoint = hit.point;
             joint = player.gameObject.AddComponent<DistanceJoint2D>();

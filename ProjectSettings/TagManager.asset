@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Platform
+  - Enemy
+  - EnemyMovementCollider
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -50,4 +53,7 @@ TagManager:
     locked: 0
   - name: Walls
     uniqueID: 2380493001
+    locked: 0
+  - name: Enemies
+    uniqueID: 2839289827
     locked: 0

@@ -17,6 +17,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <RootNamespace></RootNamespace>
+<<<<<<< HEAD
+=======
+    <ProjectGuid>{C729CDC1-6B49-D6E0-1F22-8BC1A22CEB83}</ProjectGuid>
+>>>>>>> 304e8b064f61113d0275154f02ef333a3b96447b
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>

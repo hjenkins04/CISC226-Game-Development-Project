@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 {
     //Changeable variables
     public float speed;
+    public float forwardJumpSpeed;
     public float jumpForce;
     public float downwardsRaycastDistance;
 
@@ -28,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         //Input axis for horizontal movement.
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
         //If on ground
         if (isGrounded)
@@ -37,16 +38,16 @@ public class PlayerMovement : MonoBehaviour
 
             //jump when w is pressed
             if (Input.GetKeyDown(KeyCode.W))
-            {   
+            {
                 //jump by adding an impulse force upwards
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
         }
         //Maybe want less mobility in the air
-        else
+        /*else
         {
-            rb.velocity = new Vector2(horizontalInput * (speed/2), rb.velocity.y);
-        }
+            rb.velocity = new Vector2(horizontalInput * (speed/4), rb.velocity.y);
+        }*/
     }
   
     //check for when the player first touches an object

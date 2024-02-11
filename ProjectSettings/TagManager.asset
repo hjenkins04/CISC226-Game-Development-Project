@@ -15,7 +15,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - GTerrain
   - 
   - 
   - 
@@ -50,4 +50,7 @@ TagManager:
     locked: 0
   - name: Walls
     uniqueID: 2380493001
+    locked: 0
+  - name: Objects
+    uniqueID: 4282899155
     locked: 0

@@ -4,7 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Projectile
+  - Enemy
   - Platform
+  - EnemyMovementCollider
   layers:
   - Default
   - TransparentFX
@@ -15,7 +18,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - GTerrain
   - 
   - 
   - 
@@ -43,11 +46,14 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: Background
-    uniqueID: 2190235337
+    uniqueID: 1700776161
     locked: 0
   - name: Terrain
-    uniqueID: 3347248923
+    uniqueID: 530665925
     locked: 0
   - name: Walls
-    uniqueID: 2380493001
+    uniqueID: 1080327193
+    locked: 0
+  - name: Other
+    uniqueID: 2471095719
     locked: 0

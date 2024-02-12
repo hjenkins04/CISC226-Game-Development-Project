@@ -6,7 +6,16 @@ using static UnityEngine.UI.Image;
 
 public class PlayerMovement : MonoBehaviour
 {
-    //Changeable variables
+    //Aerial Movement Variables
+    private LineRenderer lr;
+    private Vector2 grapplePoint;
+    public LayerMask Grappleable;
+    public Transform direction;
+    private DistanceJoint2D joint;
+    public float GrappleDistance;
+
+
+    //Ground Movement variables
     public float speed;
     public float jumpForce;
     public float downwardsRaycastDistance;
@@ -17,10 +26,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private bool isGrounded;
 
+    void Awake()
+    {
+        // get the line renderer component attached to player
+        lr = GetComponent<LineRenderer>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        //Ged rigidbody component of the player game object
+        //Get rigidbody component of the player game object
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -28,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         //Input axis for horizontal movement.
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
         //If on ground
         if (isGrounded)
@@ -37,15 +52,34 @@ public class PlayerMovement : MonoBehaviour
 
             //jump when w is pressed
             if (Input.GetKeyDown(KeyCode.W))
-            {   
+            {
                 //jump by adding an impulse force upwards
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
+
+            if (joint)
+            {
+                //Allowing the joint distance to decrease while the player is grounded so they don't get stuck
+                joint.maxDistanceOnly = true;
+            }
         }
         //Maybe want less mobility in the air
-        else
+        /*else
         {
-            rb.velocity = new Vector2(horizontalInput * (speed/2), rb.velocity.y);
+            rb.velocity = new Vector2(horizontalInput * (speed/4), rb.velocity.y);
+        }*/
+
+        //Grapple inputs
+        //On left click down
+        if (Input.GetMouseButtonDown(0))
+        {
+            //Debug.Log("Clicked");
+            shoot();
+        }
+        //On left click release
+        else if (Input.GetMouseButtonUp(0))
+        {
+            release();
         }
     }
   
@@ -63,6 +97,8 @@ public class PlayerMovement : MonoBehaviour
             {
                 //player is on the ground
                 isGrounded = true;
+
+                
             }          
         }
     }
@@ -74,7 +110,63 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.CompareTag("Platform"))
         {
             isGrounded = false;
+
+            if (joint)
+            {
+                //fixing the joint distance once the player leaves the ground
+                joint.maxDistanceOnly = false;
+            }
         }
     }
 
+    private void LateUpdate()
+    {
+        //Draw rope every late update
+        drawRope();
+    }
+
+    void shoot()
+    {
+        //Send a raycast in the direction of the cursor, only detecting the grappleable layer
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.up, GrappleDistance, Grappleable);
+        if (hit.collider != null)
+        {
+            //Debug.Log("Hit");
+
+            //Variable to hold the information on the hit position 
+            grapplePoint = hit.point;
+            
+            //Create new joint component
+            joint = gameObject.AddComponent<DistanceJoint2D>();
+            //Initialization stuff
+            joint.autoConfigureConnectedAnchor = false;
+            joint.maxDistanceOnly = false;
+            joint.enableCollision = true;
+            //Set an anchor point as the grapple point, the other one is automatically the player position
+            joint.connectedAnchor = grapplePoint;
+
+            //Set up line renderer points
+            lr.positionCount = 2;
+        }
+    }
+
+    void drawRope()
+    {
+        //Don't draw the rope if there is no joint object present
+        if (!joint)
+        {
+            return;
+        }
+        //If there are joints, draw from the player pos to the point grappled
+        lr.SetPosition(0, transform.position);
+        lr.SetPosition(1, grapplePoint);
+    }
+
+    void release()
+    {
+        //Remove line renderer draw positions
+        lr.positionCount = 0;
+        //Destroy the joint component
+        Destroy(joint);
+    }
 }

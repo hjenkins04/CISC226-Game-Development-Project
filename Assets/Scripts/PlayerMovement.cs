@@ -6,13 +6,17 @@ using static UnityEngine.UI.Image;
 
 public class PlayerMovement : MonoBehaviour
 {
-    //Aerial Movement Variables
+    //Grapple Variables
     private LineRenderer lr;
     private Vector2 grapplePoint;
     public LayerMask Grappleable;
     public Transform direction;
     private DistanceJoint2D joint;
     public float GrappleDistance;
+
+    //Boost Variables
+    private int yRelative;
+    public float boostForce;
 
 
     //Ground Movement variables
@@ -69,9 +73,11 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(horizontalInput * (speed/4), rb.velocity.y);
         }*/
 
+
+
         //Grapple inputs
         //On left click down
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0) && !joint)
         {
             //Debug.Log("Clicked");
             shoot();
@@ -80,6 +86,21 @@ public class PlayerMovement : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             release();
+        }
+
+
+        //Boost 
+        if (joint)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                yRelative = getRelativeYPos();
+                Debug.Log(yRelative);
+            }
+            if (Input.GetKey(KeyCode.Space))
+            {
+                boost();
+            }
         }
     }
   
@@ -168,5 +189,40 @@ public class PlayerMovement : MonoBehaviour
         lr.positionCount = 0;
         //Destroy the joint component
         Destroy(joint);
+    }
+
+    int getRelativeYPos()
+    {
+        if (transform.position.y <= grapplePoint.y)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
+    void boost()
+    {
+
+        Vector2 ropeVector = (grapplePoint - (Vector2)transform.position).normalized;
+
+        //Input axis for horizontal movement.
+        float rawHorizontalInput = Input.GetAxisRaw("Horizontal");
+
+        // Create a quaternion representing the 90 degree rotation
+        Quaternion rotation = Quaternion.Euler(0, 0, rawHorizontalInput*-90.0f*Mathf.Deg2Rad);
+
+        Vector2 normalVector = rotation * ropeVector;
+
+        if (yRelative == 0)
+        {
+            rb.AddForce(normalVector * boostForce, ForceMode2D.Impulse);
+        }
+        else
+        {
+            rb.AddForce(-normalVector * boostForce, ForceMode2D.Impulse);
+        }
     }
 }

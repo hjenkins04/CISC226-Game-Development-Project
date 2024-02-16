@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     //Boost Variables
     private int yRelative;
     public float boostForce;
+    public ParticleSystem boostEffect;
 
 
     //Ground Movement variables
@@ -46,6 +47,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         //Input axis for horizontal movement.
         float horizontalInput = Input.GetAxis("Horizontal");
 
@@ -81,6 +83,10 @@ public class PlayerMovement : MonoBehaviour
         {
             //Debug.Log("Clicked");
             shoot();
+            if (Input.GetKey(KeyCode.Space))
+            {
+                boostEffect.Play();
+            }
         }
         //On left click release
         else if (Input.GetMouseButtonUp(0))
@@ -95,12 +101,19 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 yRelative = getRelativeYPos();
-                Debug.Log(yRelative);
+                //Debug.Log(yRelative);
+
+                boostEffect.Play();
             }
             if (Input.GetKey(KeyCode.Space))
             {
                 boost();
             }
+        }
+
+        if(Input.GetKeyUp(KeyCode.Space) || !joint)
+        {
+            boostEffect.Stop();
         }
     }
   
@@ -111,7 +124,7 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.CompareTag("Platform"))
         {
             //downwards raycast to check if the platform is below the player, we don't want to say the player is grounded when its their head touching the bottom of a platform
-            RaycastHit2D rcHit = Physics2D.BoxCast(transform.position, new Vector2(1f, 1f), 0f, Vector2.down, downwardsRaycastDistance);
+            RaycastHit2D rcHit = Physics2D.BoxCast(transform.position, new Vector2(1.9f, 1f), 0f, Vector2.down, downwardsRaycastDistance, Grappleable);
             
             //Check if there is a hit
             if (rcHit.collider != null)
@@ -216,13 +229,22 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 normalVector = rotation * ropeVector;
 
+
+        float angle = Mathf.Atan2(ropeVector.y, ropeVector.x) * Mathf.Rad2Deg + 90f;
+
+        
+
         if (yRelative == 0)
         {
-            rb.AddForce(normalVector * boostForce, ForceMode2D.Impulse);
+            rb.AddForce(normalVector * boostForce, ForceMode2D.Force);
+
+            boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput*-90f), Vector3.forward);
         }
         else
         {
-            rb.AddForce(-normalVector * boostForce, ForceMode2D.Impulse);
+            rb.AddForce(-normalVector * boostForce, ForceMode2D.Force);
+
+            boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
         }
     }
 }

@@ -59,13 +59,9 @@ public class PlayerMovement : MonoBehaviour
         //Input axis for horizontal movement.
         float horizontalInput = Input.GetAxis("Horizontal");
 
-        //FIX - Player animation but breaks movement
+        float verticalInput = Input.GetAxis("Vertical");
 
-        //float verticalInput = Input.GetAxis("Vertical");
-        //Vector2 direction = new Vector2(horizontalInput, verticalInput);
-        //Run(direction);
 
-        //anim.SetFloat("HorizontalAxis", direction.x);
 
         ////Check player direction to flip run animation if necessary.
         ////If moving left and not already facing left, flip to face left.
@@ -82,15 +78,18 @@ public class PlayerMovement : MonoBehaviour
         //If on ground
         if (isGrounded)
         {
-            rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
+            //animations
+            
+            Vector2 direction = new Vector2(horizontalInput, verticalInput);
+            anim.SetFloat("HorizontalAxis", direction.x);
 
+            rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
             //jump when w is pressed
             if (Input.GetKeyDown(KeyCode.W))
             {
                 //jump by adding an impulse force upwards
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }
-
             if (joint)
             {
                 //Allowing the joint distance to decrease while the player is grounded so they don't get stuck
@@ -130,6 +129,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 yRelative = getRelativeYPos();
                 //Debug.Log(yRelative);
+                //Debug.Log("Space Down");
 
                 boostEffect.Play();
             }
@@ -142,8 +142,7 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.Space) || !joint)
         {
             boostEffect.Stop();
-        }
-        
+        }    
     }
 
     //Smoothing out physics stuff
@@ -169,15 +168,19 @@ public class PlayerMovement : MonoBehaviour
         transform.localScale = theScale;
     }
 
+
+
     //check for when the player first touches an object
     void OnCollisionEnter2D(Collision2D collision)
     {
         //When the collision is on a platform
         if(collision.gameObject.CompareTag("Platform"))
         {
+            //Debug.Log("Hit Ground");
             //downwards raycast to check if the platform is below the player, we don't want to say the player is grounded when its their head touching the bottom of a platform
             RaycastHit2D rcHit = Physics2D.BoxCast(transform.position, new Vector2(2.1f, 1f), 0f, Vector2.down, downwardsRaycastDistance, Grappleable);
-            
+            //Debug.DrawRay(transform.position, Vector2.down, Color.blue, downwardsRaycastDistance);
+
             //Check if there is a hit
             if (rcHit.collider != null)
             {
@@ -189,13 +192,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+
     //Same thing as collision enter, but its exit.
     private void OnCollisionExit2D(Collision2D collision)
     {
         //If they exited a platform, the player is not on the ground anymore
         if(collision.gameObject.CompareTag("Platform"))
         {
+            //Debug.Log("Left ground");
             isGrounded = false;
+
+            anim.SetFloat("HorizontalAxis", 0);
 
             if (joint)
             {
@@ -205,11 +213,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+
     private void LateUpdate()
     {
         //Draw rope every late update
         drawRope();
     }
+
 
     void shoot()
     {
@@ -236,6 +247,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
     void drawRope()
     {
         //Don't draw the rope if there is no joint object present
@@ -248,6 +260,8 @@ public class PlayerMovement : MonoBehaviour
         lr.SetPosition(1, grapplePoint);
     }
 
+
+
     void release()
     {
         //Remove line renderer draw positions
@@ -255,6 +269,8 @@ public class PlayerMovement : MonoBehaviour
         //Destroy the joint component
         Destroy(joint);
     }
+
+
 
     int getRelativeYPos()
     {
@@ -267,6 +283,8 @@ public class PlayerMovement : MonoBehaviour
             return 1;
         }
     }
+
+
 
     void boost()
     {

@@ -857,3 +857,5 @@ Received Import Request.
 Start importing Assets/Background/background_glacial_mountains.png using Guid(78a159af82aac8d43874f3342631fe21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd33f82cc67405562e937bd87a6b6ae89') in 0.029939 seconds
 Number of updated asset objects reloaded before import = 0
 Number of asset objects unloaded after import = 3
+========================================================================
+Received Prepare

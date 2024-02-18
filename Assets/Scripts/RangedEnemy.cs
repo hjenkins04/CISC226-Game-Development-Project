@@ -7,7 +7,13 @@ public class RangedEnemy : MonoBehaviour
     public float fireRate = 2f;
     public float moveSpeed = 2f;
 
+    private Transform player;
+
     private float nextFireTime;
+
+    void Start() {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     void Update()
     {
@@ -22,11 +28,11 @@ public class RangedEnemy : MonoBehaviour
 
     void FireProjectile()
     {
-        // Instantiate a new projectile
+        Vector2 direction = (player.position - transform.position).normalized;
         GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-        rb.velocity = transform.right * projectileSpeed;
+        rb.velocity = direction * projectileSpeed;
     }
 
     void OnTriggerEnter2D(Collider2D other) {

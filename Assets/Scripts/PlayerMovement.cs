@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
             release();
         }
 
-
+        
         //Boost 
         if (joint)
         {
@@ -115,8 +115,15 @@ public class PlayerMovement : MonoBehaviour
         {
             boostEffect.Stop();
         }
+        
     }
-  
+
+    //Smoothing out physics stuff
+    private void FixedUpdate()
+    {
+        
+    }
+
     //check for when the player first touches an object
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -124,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.CompareTag("Platform"))
         {
             //downwards raycast to check if the platform is below the player, we don't want to say the player is grounded when its their head touching the bottom of a platform
-            RaycastHit2D rcHit = Physics2D.BoxCast(transform.position, new Vector2(1.9f, 1f), 0f, Vector2.down, downwardsRaycastDistance, Grappleable);
+            RaycastHit2D rcHit = Physics2D.BoxCast(transform.position, new Vector2(2.1f, 1f), 0f, Vector2.down, downwardsRaycastDistance, Grappleable);
             
             //Check if there is a hit
             if (rcHit.collider != null)

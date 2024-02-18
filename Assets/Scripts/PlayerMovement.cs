@@ -31,6 +31,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private bool isGrounded;
 
+    //Animator
+    private Animator anim;
+    public bool facingLeft;
+    public int side;
+
     void Awake()
     {
         // get the line renderer component attached to player
@@ -42,6 +47,9 @@ public class PlayerMovement : MonoBehaviour
     {
         //Get rigidbody component of the player game object
         rb = GetComponent<Rigidbody2D>();
+        //Get animator component of the player game object
+        anim = GetComponentInChildren<Animator>();
+
     }
 
     // Update is called once per frame
@@ -50,6 +58,26 @@ public class PlayerMovement : MonoBehaviour
         
         //Input axis for horizontal movement.
         float horizontalInput = Input.GetAxis("Horizontal");
+
+        //FIX - Player animation but breaks movement
+
+        //float verticalInput = Input.GetAxis("Vertical");
+        //Vector2 direction = new Vector2(horizontalInput, verticalInput);
+        //Run(direction);
+
+        //anim.SetFloat("HorizontalAxis", direction.x);
+
+        ////Check player direction to flip run animation if necessary.
+        ////If moving left and not already facing left, flip to face left.
+        //if (horizontalInput < 0 && !facingLeft)
+        //{
+        //    FlipCharacter(); //Now character will face left.
+        //}
+        ////If moving right and currently facing left, flip to face right.
+        //else if (horizontalInput > 0 && facingLeft)
+        //{
+        //    FlipCharacter(); //Now character will face right.
+        //}
 
         //If on ground
         if (isGrounded)
@@ -116,7 +144,23 @@ public class PlayerMovement : MonoBehaviour
             boostEffect.Stop();
         }
     }
-  
+    
+    public void Run(Vector2 dir)
+    {
+        rb.velocity = new Vector2(dir.x * speed, rb.velocity.y);
+    }
+
+    void FlipCharacter()
+    {
+        //Toggle the state.
+        facingLeft = !facingLeft;
+
+        //Flip the character by multiplying the x scale by -1.
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
     //check for when the player first touches an object
     void OnCollisionEnter2D(Collision2D collision)
     {

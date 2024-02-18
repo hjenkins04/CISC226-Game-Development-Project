@@ -13,6 +13,7 @@ public class Projectile : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            // Decrease player hp
             Destroy(gameObject);
         }
     }

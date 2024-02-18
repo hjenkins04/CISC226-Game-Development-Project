@@ -133,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
 
                 boostEffect.Play();
             }
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space) && !isGrounded)
             {
                 boost();
             }

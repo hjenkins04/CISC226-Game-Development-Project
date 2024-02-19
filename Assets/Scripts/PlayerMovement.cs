@@ -66,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         //Input axis for horizontal movement.
         float horizontalInput = Input.GetAxis("Horizontal");
 
@@ -74,8 +74,8 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-        ////Check player direction to flip run animation if necessary.
-        ////If moving left and not already facing left, flip to face left.
+        //Check player direction to flip run animation if necessary.
+        //If moving left and not already facing left, flip to face left.
         if (horizontalInput < 0 && !facingLeft)
         {
             FlipCharacter(); //Now character will face left.
@@ -90,13 +90,14 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
         {
             //animations   
-            //Vector2 direction = new Vector2(horizontalInput, verticalInput);
-            //anim.SetFloat("HorizontalAxis", direction.x);
+            Vector2 direction = new Vector2(horizontalInput, verticalInput);
+            anim.SetFloat("HorizontalAxis", direction.x);
+            anim.SetBool("OnGround", isGrounded);
 
             rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
             //jump when w is pressed
             if (Input.GetKeyDown(KeyCode.W))
-            {   
+            {
                 //Trigger Jump Animation
                 anim.SetTrigger("Jump");
                 //jump by adding an impulse force upwards
@@ -108,7 +109,6 @@ public class PlayerMovement : MonoBehaviour
                 joint.maxDistanceOnly = true;
             }
         }
-
 
 
         //Grapple inputs

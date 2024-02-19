@@ -86,7 +86,9 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
             //jump when w is pressed
             if (Input.GetKeyDown(KeyCode.W))
-            {
+            {   
+                //Trigger Jump Animation
+                anim.SetTrigger("Jump");
                 //jump by adding an impulse force upwards
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             }

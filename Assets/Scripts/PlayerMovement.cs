@@ -15,9 +15,17 @@ public class PlayerMovement : MonoBehaviour
     public float GrappleDistance;
 
     //Boost Variables
+    private bool canBoost;
     private int yRelative;
     public float boostForce;
     public ParticleSystem boostEffect;
+    public float maxSpeed;
+
+    //Aerial Dash
+    public ParticleSystem dashEffect;
+    public float dashCooldown;
+    public float dashForce;
+    private float lastTime;
 
 
     //Ground Movement variables
@@ -50,6 +58,9 @@ public class PlayerMovement : MonoBehaviour
         //Get animator component of the player game object
         anim = GetComponentInChildren<Animator>();
 
+
+        //Dash Cooldown stuff
+        lastTime = Time.time;
     }
 
     // Update is called once per frame
@@ -78,10 +89,9 @@ public class PlayerMovement : MonoBehaviour
         //If on ground
         if (isGrounded)
         {
-            //animations
-            
-            Vector2 direction = new Vector2(horizontalInput, verticalInput);
-            anim.SetFloat("HorizontalAxis", direction.x);
+            //animations   
+            //Vector2 direction = new Vector2(horizontalInput, verticalInput);
+            //anim.SetFloat("HorizontalAxis", direction.x);
 
             rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
             //jump when w is pressed
@@ -98,11 +108,6 @@ public class PlayerMovement : MonoBehaviour
                 joint.maxDistanceOnly = true;
             }
         }
-        //Maybe want less mobility in the air
-        /*else
-        {
-            rb.velocity = new Vector2(horizontalInput * (speed/4), rb.velocity.y);
-        }*/
 
 
 
@@ -115,11 +120,13 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.Space))
             {
                 boostEffect.Play();
+                canBoost = true;
             }
         }
         //On left click release
         else if (Input.GetMouseButtonUp(0))
         {
+            canBoost = false;
             release();
         }
 
@@ -134,22 +141,42 @@ public class PlayerMovement : MonoBehaviour
                 //Debug.Log("Space Down");
 
                 boostEffect.Play();
+                canBoost = true;
             }
             if (Input.GetKey(KeyCode.Space) && !isGrounded)
             {
-                boost();
+                
+                //boost();
             }
         }
 
         if(Input.GetKeyUp(KeyCode.Space) || !joint)
         {
             boostEffect.Stop();
-        }    
+            canBoost = false;
+        }
+
+        // Clamp the velocity to ensure it doesn't exceed the maximum speed
+        rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
+
+
+        //Aerial Dash
+        if(Input.GetKeyDown(KeyCode.Q) && !isGrounded && ((Time.time - lastTime) >= dashCooldown))
+        {
+            dashEffect.transform.rotation = direction.rotation;
+            rb.AddForce(direction.up * dashForce, ForceMode2D.Impulse);
+            dashEffect.Play();
+            lastTime = Time.time;
+        }
     }
 
     //Smoothing out physics stuff
     private void FixedUpdate()
     {   
+        if(canBoost)
+        {
+            boost();
+        }
     }
 
     /*
@@ -205,7 +232,7 @@ public class PlayerMovement : MonoBehaviour
             //Debug.Log("Left ground");
             isGrounded = false;
 
-            anim.SetFloat("HorizontalAxis", 0);
+            //anim.SetFloat("HorizontalAxis", 0);
 
             if (joint)
             {
@@ -304,19 +331,21 @@ public class PlayerMovement : MonoBehaviour
 
         float angle = Mathf.Atan2(ropeVector.y, ropeVector.x) * Mathf.Rad2Deg + 90f;
 
-        
 
-        if (yRelative == 0)
+        if (rawHorizontalInput != 0)
         {
-            rb.AddForce(normalVector * boostForce, ForceMode2D.Force);
+            if (yRelative == 0)
+            {
+                rb.AddForce(normalVector * boostForce, ForceMode2D.Impulse);
 
-            boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput*-90f), Vector3.forward);
-        }
-        else
-        {
-            rb.AddForce(-normalVector * boostForce, ForceMode2D.Force);
+                boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * -90f), Vector3.forward);
+            }
+            else
+            {
+                rb.AddForce(-normalVector * boostForce, ForceMode2D.Impulse);
 
-            boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
+                boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
+            }
         }
     }
 }

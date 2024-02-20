@@ -155,7 +155,7 @@ namespace FrostFalls
                 Move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")),
                 Grapple = Input.GetMouseButtonDown(0),
                 StopGrapple = Input.GetMouseButtonUp(0),
-                Boost = Input.GetKey(KeyCode.Space),
+                Boost = Input.GetKeyDown(KeyCode.Space),
                 StopBoost = Input.GetKeyUp(KeyCode.Space)
             };
 
@@ -202,11 +202,14 @@ namespace FrostFalls
         {
             // Perform physics and movement calculations at a fixed intervals
             CheckCollisions();
-            HandleJump();
+            if (!_isGrappling || !_boostActive)
+            {
+                HandleJump();
+                HandleDirection();
+                HandleGravity();
+                ApplyMovement();
+            }
             HandleGrapple();
-            HandleDirection();
-            HandleGravity();
-            ApplyMovement();
             HandleBoost();
 
             if (_grounded && _joint)
@@ -339,6 +342,9 @@ namespace FrostFalls
             RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.up, GrappleDistance, GrappleableLayers);
             if (hit.collider != null)
             {
+                _isGrappling = true;
+                _grappleUsable = false;
+                _jumpAllowed = false;
                 _grapplePoint = hit.point;
                 _joint = gameObject.AddComponent<DistanceJoint2D>();
                 _joint.connectedAnchor = _grapplePoint;
@@ -346,11 +352,8 @@ namespace FrostFalls
                 _joint.distance = Vector2.Distance(transform.position, _grapplePoint) * 0.8f; // Multiplier to control the slack of the rope
                 _joint.maxDistanceOnly = true;
                 _lineRenderer.positionCount = 2;
+                Grappled?.Invoke();
             }
-            Grappled?.Invoke();
-            _grappleUsable = false;
-            _jumpAllowed = false;
-            _isGrappling = true;
         }
 
         /// <summary>
@@ -380,6 +383,7 @@ namespace FrostFalls
                 _lineRenderer.SetPosition(0, transform.position);
                 _lineRenderer.SetPosition(1, _grapplePoint);
                 _isGrappling = true;
+                _jumpAllowed = false;
             }
         }
         #endregion
@@ -387,7 +391,6 @@ namespace FrostFalls
         #region Boost
         private bool _boostToConsume; // Indicates a boost that needs to be processed
         private bool _stopBoostToConsume; // Indicates a boost release that needs to be processed
-        private bool _boostUsable; // Allows boost
         private bool _boostActive = false; // Boost is currently active conditions are met
         /// <summary>
         /// Allows a boost if the boost is available and the key has been pressed
@@ -396,7 +399,7 @@ namespace FrostFalls
         {
             if (!_boostToConsume && !_stopBoostToConsume) return;
 
-            if (_isGrappling && _boostToConsume) AllowBoost();
+            if ((_isGrappling && _boostToConsume) || (_isGrappling && _boostActive)) ApplyBoostForce();
 
             if (_stopBoostToConsume) StopBoost();
 
@@ -404,52 +407,46 @@ namespace FrostFalls
             _stopBoostToConsume = false;
         }
         /// <summary>
-        /// Allows a boost if the boost is available and the key has been pressed
+        /// applies a boost if the boost is available and the key has been pressed
         /// </summary>
-        private void AllowBoost()
+        private void ApplyBoostForce()
         {
-            _boostUsable = true;
-        }
-
-        private void StartBoost(float rawHorizontalInput)
-        {
-            _yRelative = getRelativeYPos();
             boostEffect.Play();
+            _boostActive = true; // Indicate that boost is active
 
-            Vector2 ropeVector = (_grapplePoint - (Vector2)transform.position).normalized;
-
-            // Create a quaternion representing the 90 degree rotation
-            Quaternion rotation = Quaternion.Euler(0, 0, rawHorizontalInput * -90.0f * Mathf.Deg2Rad);
-
-            Vector2 normalVector = rotation * ropeVector;
-
-
-            float angle = Mathf.Atan2(ropeVector.y, ropeVector.x) * Mathf.Rad2Deg + 90f;
-
-            //BUG
-            //Horizontal Movement Not Working
-            //Debug.Log(" " + ropeVector + " " + normalVector + " " + boostForce);
-            //_frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, rawHorizontalInput * MaxSpeed, Acceleration * Time.fixedDeltaTime);
-            //_rb.velocity = new Vector2(rawHorizontalInput * MaxSpeed, _rb.velocity.y);
-
-            if (rawHorizontalInput != 0)
+            if (_boostToConsume || Input.GetKeyDown(KeyCode.Space))
             {
-                if (_yRelative == 0)
-                {
-                    _rb.AddForce(normalVector * boostForce, ForceMode2D.Impulse);
+                _yRelative = getRelativeYPos();
+                Vector2 ropeVector = (_grapplePoint - (Vector2)transform.position).normalized;
 
-                    boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * -90f), Vector3.forward);
-                }
-                else
-                {
-                    _rb.AddForce(-normalVector * boostForce, ForceMode2D.Impulse);
+                //Input axis for horizontal movement.
+                float rawHorizontalInput = Input.GetAxisRaw("Horizontal");
 
-                    boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
+                // Create a quaternion representing the 90 degree rotation
+                Quaternion rotation = Quaternion.Euler(0, 0, rawHorizontalInput * -90.0f * Mathf.Deg2Rad);
+
+                Vector2 normalVector = rotation * ropeVector;
+
+
+                float angle = Mathf.Atan2(ropeVector.y, ropeVector.x) * Mathf.Rad2Deg + 90f;
+
+
+                if (rawHorizontalInput != 0)
+                {
+                    if (_yRelative == 0)
+                    {
+                        _rb.AddForce(normalVector * boostForce, ForceMode2D.Impulse);
+
+                        boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * -90f), Vector3.forward);
+                    }
+                    else
+                    {
+                        _rb.AddForce(-normalVector * boostForce, ForceMode2D.Impulse);
+
+                        boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
+                    }
                 }
             }
-
-            _boostToConsume = false;
-            _boostActive = true;
         }
 
         /// <summary>
@@ -458,9 +455,7 @@ namespace FrostFalls
         private void StopBoost()
         {
             boostEffect.Stop();
-            _boostUsable = false;
-            _boostActive = false;
-            _stopBoostToConsume = false;
+            _boostActive = false; // Indicate that boost is no longer active
         }
         #endregion
 
@@ -477,10 +472,7 @@ namespace FrostFalls
                 var deceleration = _grounded ? GroundDeceleration : AirDeceleration;
                 _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
             }
-            else if(_isGrappling && _boostUsable){
-                StartBoost(_frameInput.Move.x);
-            }
-            else if (!_isGrappling)
+            else if (!_isGrappling || !_boostActive)
             {
                 // Applies acceleration towards the target speed based on input direction.
                 _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, _frameInput.Move.x * MaxSpeed, Acceleration * Time.fixedDeltaTime);

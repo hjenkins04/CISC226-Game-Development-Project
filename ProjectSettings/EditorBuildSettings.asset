@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Movement Testing Room.unity
     guid: c67b7868f243ade408b5bad9f446ca99
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: d12f3399ddb1f0944a54cda9f6fc1376
   m_configObjects: {}

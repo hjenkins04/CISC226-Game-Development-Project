@@ -20,7 +20,6 @@ public class PlayerMovement : MonoBehaviour
     public float boostForce;
     public ParticleSystem boostEffect;
     public float maxSpeed;
-    public float pullForce;
 
     //Aerial Dash
     public ParticleSystem dashEffect;
@@ -41,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
 
     //Animator
-    private Animator anim;
+    //private Animator anim;
     public bool facingLeft;
     public int side;
 
@@ -57,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
         //Get rigidbody component of the player game object
         rb = GetComponent<Rigidbody2D>();
         //Get animator component of the player game object
-        anim = GetComponentInChildren<Animator>();
+        //anim = GetComponentInChildren<Animator>();
 
 
         //Dash Cooldown stuff
@@ -92,15 +91,15 @@ public class PlayerMovement : MonoBehaviour
         {
             //animations   
             Vector2 direction = new Vector2(horizontalInput, verticalInput);
-            // anim.SetFloat("HorizontalAxis", direction.x);
-            // anim.SetBool("OnGround", isGrounded);
+            //anim.SetFloat("HorizontalAxis", direction.x);
+            //anim.SetBool("OnGround", isGrounded);
 
             rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
             //jump when w is pressed
             if (Input.GetKeyDown(KeyCode.W))
             {
                 //Trigger Jump Animation
-                anim.SetTrigger("Jump");
+                //anim.SetTrigger("Jump");
 
 
                 //jump by adding an impulse force upwards
@@ -349,12 +348,6 @@ public class PlayerMovement : MonoBehaviour
 
                 boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
             }
-        }
-        else
-        {
-            boostEffect.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-
-            joint.distance -= pullForce * Time.deltaTime;
         }
     }
 }

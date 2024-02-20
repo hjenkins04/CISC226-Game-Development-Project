@@ -18,7 +18,6 @@ public class CameraFollow : MonoBehaviour
         //Just matching the camera pos with player pos
         Transform playerPos = player.transform;
 
-        transform.position = new Vector3(playerPos.position.x, playerPos.position.y, -10
-            );
+        transform.position = new Vector3(playerPos.position.x, playerPos.position.y, -10);
     }
 }

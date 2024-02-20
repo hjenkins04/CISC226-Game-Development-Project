@@ -12,17 +12,11 @@ public class GrappleScript : MonoBehaviour
     private DistanceJoint2D joint;
 
     public float GrappleDistance;
-    // Start is called before the first frame update
 
 
     void Awake()
     {
         lr = GetComponent<LineRenderer>();
-    }
-
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame

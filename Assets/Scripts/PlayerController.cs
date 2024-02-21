@@ -105,12 +105,13 @@ namespace FrostFalls
         public float boostForce; //Move to Settings Store
         public ParticleSystem boostEffect;
         public float maxSpeed;
+        public float pullForce;
 
         // Aerial Dash Mechanic
         public ParticleSystem dashEffect;
         public float dashCooldown;
         public float dashForce;
-        private float currentDashWaitTime;
+        private float _currentDashWaitTime;
 
         // Exposed properties and events through IPlayerController interface
         public Vector2 FrameInput => _frameInput.Move;
@@ -133,7 +134,7 @@ namespace FrostFalls
         private void Start()
         {
             //Time since last dash
-            currentDashWaitTime = Time.time;
+            _currentDashWaitTime = Time.time;
         }
 
         private void Update()
@@ -150,13 +151,14 @@ namespace FrostFalls
         {
             _frameInput = new FrameInput
             {
-                JumpDown = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W),
-                JumpHeld = Input.GetButton("Jump") || Input.GetKey(KeyCode.W),
+                JumpDown = Input.GetKeyDown(KeyCode.W),
+                JumpHeld = Input.GetKey(KeyCode.W),
                 Move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")),
                 Grapple = Input.GetMouseButtonDown(0),
                 StopGrapple = Input.GetMouseButtonUp(0),
-                Boost = Input.GetKeyDown(KeyCode.Space),
-                StopBoost = Input.GetKeyUp(KeyCode.Space)
+                Boost = Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.Space),
+                StopBoost = Input.GetKeyUp(KeyCode.Space),
+                Dash = Input.GetKeyDown(KeyCode.Q)
             };
 
             // Apply input snapping to avoid unintentional small movements
@@ -196,6 +198,12 @@ namespace FrostFalls
             {
                 _stopBoostToConsume = true;
             }
+
+            //Mark dash for processing
+            if (_frameInput.Dash)
+            {
+                _dashToConsume = true;
+            }
         }
 
         private void FixedUpdate()
@@ -211,6 +219,7 @@ namespace FrostFalls
             }
             HandleGrapple();
             HandleBoost();
+            HandleDash();
 
             if (_grounded && _joint)
             {
@@ -414,9 +423,10 @@ namespace FrostFalls
             boostEffect.Play();
             _boostActive = true; // Indicate that boost is active
 
-            if (_boostToConsume || Input.GetKeyDown(KeyCode.Space))
+            if (_boostToConsume) // || Input.GetKeyDown(KeyCode.Space) )
             {
-                _yRelative = getRelativeYPos();
+                if (!_boostActive) _yRelative = getRelativeYPos();
+
                 Vector2 ropeVector = (_grapplePoint - (Vector2)transform.position).normalized;
 
                 //Input axis for horizontal movement.
@@ -446,6 +456,12 @@ namespace FrostFalls
                         boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
                     }
                 }
+                else
+                {
+                    boostEffect.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+                    _joint.distance -= pullForce * Time.deltaTime;
+                }
             }
         }
 
@@ -459,6 +475,32 @@ namespace FrostFalls
         }
         #endregion
 
+        #region Dash
+        private bool _dashToConsume; // Indicates a dash that needs to be processed
+        /// <summary>
+        /// Allows a dash if the dash is available and the key has been pressed
+        /// </summary>
+        private void HandleDash()
+        {
+            if (!_dashToConsume) return;
+
+            if (_isGrappling && _dashToConsume && ((_time - _currentDashWaitTime) >= dashCooldown)) ApplyDashForce();
+
+            _dashToConsume = false;
+        }
+        
+        /// <summary>
+        /// Applies a dash if the dash is available and the key has been pressed
+        /// </summary>
+        private void ApplyDashForce()
+        {
+            dashEffect.transform.rotation = direction.rotation;
+            _rb.AddForce(direction.up * dashForce, ForceMode2D.Impulse);
+            dashEffect.Play();
+            _currentDashWaitTime = _time;
+        }
+        #endregion
+
         #region Horizontal Movement
 
         /// <summary>
@@ -466,13 +508,15 @@ namespace FrostFalls
         /// </summary>
         private void HandleDirection()
         {
-            if (_frameInput.Move.x == 0)
+            if (_isGrappling || _boostActive) return;
+
+            else if (_frameInput.Move.x == 0)
             {
                 // Applies deceleration when no input is given.
                 var deceleration = _grounded ? GroundDeceleration : AirDeceleration;
                 _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
             }
-            else if (!_isGrappling || !_boostActive)
+            else
             {
                 // Applies acceleration towards the target speed based on input direction.
                 _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, _frameInput.Move.x * MaxSpeed, Acceleration * Time.fixedDeltaTime);
@@ -529,7 +573,8 @@ namespace FrostFalls
             public bool StopGrapple; // Indicates if the grapple release button was pressed this frame
             public bool Boost; // Indicates if the boost button was pressed this frame
             public bool StopBoost; // Indicates if the boost release button was pressed this frame
-        }
+            public bool Dash; // Indicates if the dash button was pressed this frame
+    }
 
     // Interface for events and properties for the player controller
     public interface IPlayerController

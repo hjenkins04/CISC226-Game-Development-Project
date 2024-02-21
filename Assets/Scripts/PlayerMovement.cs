@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     public float boostForce;
     public ParticleSystem boostEffect;
     public float maxSpeed;
+    public float pullForce;
 
     //Aerial Dash
     public ParticleSystem dashEffect;
@@ -348,6 +349,12 @@ public class PlayerMovement : MonoBehaviour
 
                 boostEffect.transform.rotation = Quaternion.AngleAxis((angle + rawHorizontalInput * 90f), Vector3.forward);
             }
+        }
+        else
+        {
+            boostEffect.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            joint.distance -= pullForce * Time.deltaTime;
         }
     }
 }

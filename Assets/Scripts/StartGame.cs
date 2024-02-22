@@ -19,6 +19,9 @@ public class StartGame : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        if (!ControlsMenu.controlVisible){
+            SceneManager.LoadScene(sceneName);
+        }
+        
     }
 }

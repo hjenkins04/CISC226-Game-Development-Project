@@ -26,6 +26,7 @@ public class FlyingEnemy : MonoBehaviour
         if (Vector2.Distance(transform.position, player.position) <= detectionRange) {
             isPatrolling = false;
             aiPath.enabled = true;
+            aiPath.destination = player.position;
             Debug.Log("in range!");
         }
 

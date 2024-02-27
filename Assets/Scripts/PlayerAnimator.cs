@@ -2,34 +2,29 @@ using UnityEngine;
 
 namespace FrostFalls
 {
-    /// <summary>
-    /// VERY primitive animator example.
-    /// </summary>
     public class PlayerAnimator : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
-        private Animator _anim;
+        [Header("References")]
+        [SerializeField] private Animator _anim;
 
-        [SerializeField] private SpriteRenderer _sprite;
-
-        [Header("Settings")] [SerializeField, Range(1f, 3f)]
+        [Header("Settings")]
+        [SerializeField, Range(1f, 3f)]
         private float _maxIdleSpeed = 2;
-
         [SerializeField] private float _maxTilt = 5;
         [SerializeField] private float _tiltSpeed = 20;
 
-        [Header("Particles")] [SerializeField] private ParticleSystem _jumpParticles;
+        [Header("Particles")]
+        [SerializeField] private ParticleSystem _jumpParticles;
         [SerializeField] private ParticleSystem _launchParticles;
         [SerializeField] private ParticleSystem _moveParticles;
         [SerializeField] private ParticleSystem _landParticles;
 
-        [Header("Audio Clips")] [SerializeField]
-        private AudioClip[] _footsteps;
+        [Header("Audio Clips")]
+        [SerializeField] private AudioClip[] _footsteps;
 
         private AudioSource _source;
         private IPlayerController _player;
         private bool _grounded;
-        private ParticleSystem.MinMaxGradient _currentGradient;
 
         private void Awake()
         {
@@ -41,7 +36,8 @@ namespace FrostFalls
         {
             _player.Jumped += OnJumped;
             _player.GroundedChanged += OnGroundedChanged;
-
+            _player.Grappled += OnGrappled;
+            _player.FreeFall += OnFreeFall;
             _moveParticles.Play();
         }
 
@@ -49,7 +45,8 @@ namespace FrostFalls
         {
             _player.Jumped -= OnJumped;
             _player.GroundedChanged -= OnGroundedChanged;
-
+            _player.Grappled -= OnGrappled;
+            _player.FreeFall += OnFreeFall;
             _moveParticles.Stop();
         }
 
@@ -57,61 +54,72 @@ namespace FrostFalls
         {
             if (_player == null) return;
 
-            DetectGroundColor();
-
             HandleSpriteFlip();
-
             HandleIdleSpeed();
-
             HandleCharacterTilt();
         }
 
         private void HandleSpriteFlip()
         {
-            if (_player.FrameInput.x != 0) _sprite.flipX = _player.FrameInput.x < 0;
+            if (_player.FrameInput.x != 0)
+            {
+                // Determine the direction to face based on input, without directly checking the scale
+                bool shouldFaceLeft = _player.FrameInput.x < 0;
+                // Check current facing direction and input direction
+                // Flip only if the character is facing the opposite direction of movement
+                if ((shouldFaceLeft && transform.localScale.x > 0) || (!shouldFaceLeft && transform.localScale.x < 0))
+                {
+                    Vector3 theScale = transform.localScale;
+                    theScale.x *= -1;
+                    transform.localScale = theScale;
+                }
+            }
         }
 
         private void HandleIdleSpeed()
         {
             var inputStrength = Mathf.Abs(_player.FrameInput.x);
             _anim.SetFloat(IdleSpeedKey, Mathf.Lerp(1, _maxIdleSpeed, inputStrength));
-            _moveParticles.transform.localScale = Vector3.MoveTowards(_moveParticles.transform.localScale, Vector3.one * inputStrength, 2 * Time.deltaTime);
         }
 
         private void HandleCharacterTilt()
         {
             var runningTilt = _grounded ? Quaternion.Euler(0, 0, _maxTilt * _player.FrameInput.x) : Quaternion.identity;
-            _anim.transform.up = Vector3.RotateTowards(_anim.transform.up, runningTilt * Vector2.up, _tiltSpeed * Time.deltaTime, 0f);
+            transform.up = Vector3.RotateTowards(transform.up, runningTilt * Vector2.up, _tiltSpeed * Time.deltaTime, 0f);
         }
 
         private void OnJumped()
         {
             _anim.SetTrigger(JumpKey);
+            _anim.ResetTrigger(FreeFallKey);
             _anim.ResetTrigger(GroundedKey);
+            _jumpParticles.Play();
+            _launchParticles.Play();
+        }
 
+        private void OnGrappled()
+        {
+            _anim.SetTrigger(GrappleKey);
+            _anim.ResetTrigger(FreeFallKey);
+            _anim.ResetTrigger(GroundedKey);
+        }
 
-            if (_grounded) // Avoid coyote
-            {
-                SetColor(_jumpParticles);
-                SetColor(_launchParticles);
-                _jumpParticles.Play();
-            }
+        private void OnFreeFall()
+        {
+            _anim.SetTrigger(FreeFallKey);
+            _anim.ResetTrigger(GrappleKey);
+            _anim.ResetTrigger(JumpKey);
         }
 
         private void OnGroundedChanged(bool grounded, float impact)
         {
             _grounded = grounded;
-            
+
             if (grounded)
             {
-                DetectGroundColor();
-                SetColor(_landParticles);
-
                 _anim.SetTrigger(GroundedKey);
                 _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
                 _moveParticles.Play();
-
-                _landParticles.transform.localScale = Vector3.one * Mathf.InverseLerp(0, 40, impact);
                 _landParticles.Play();
             }
             else
@@ -120,24 +128,10 @@ namespace FrostFalls
             }
         }
 
-        private void DetectGroundColor()
-        {
-            var hit = Physics2D.Raycast(transform.position, Vector3.down, 2);
-
-            if (!hit || hit.collider.isTrigger || !hit.transform.TryGetComponent(out SpriteRenderer r)) return;
-            var color = r.color;
-            _currentGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
-            SetColor(_moveParticles);
-        }
-
-        private void SetColor(ParticleSystem ps)
-        {
-            var main = ps.main;
-            main.startColor = _currentGradient;
-        }
-
         private static readonly int GroundedKey = Animator.StringToHash("Grounded");
         private static readonly int IdleSpeedKey = Animator.StringToHash("IdleSpeed");
         private static readonly int JumpKey = Animator.StringToHash("Jump");
+        private static readonly int GrappleKey = Animator.StringToHash("Grapple");
+        private static readonly int FreeFallKey = Animator.StringToHash("FreeFall");
     }
 }

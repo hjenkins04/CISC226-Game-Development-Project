@@ -5249,10 +5249,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   direction: {fileID: 6460699813292520755}
-  GrappleDistance: 20
+  GrappleDistance: 30
   boostForce: 100
   boostEffect: {fileID: 7561645132916569519}
   maxSpeed: 60
+  pullForce: 20
   dashEffect: {fileID: 6094014428701713963}
   dashCooldown: 3
   dashForce: 50

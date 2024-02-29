@@ -41,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
 
     //Animator
-    //private Animator anim;
+    private Animator anim;
     public bool facingLeft;
     public int side;
 
@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
         //Input axis for horizontal movement.
         float horizontalInput = Input.GetAxis("Horizontal");
 
-        float verticalInput = Input.GetAxis("Vertical");
+        //float verticalInput = Input.GetAxis("Vertical");
 
 
 
@@ -91,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
         {
             //animations   
-            Vector2 direction = new Vector2(horizontalInput, verticalInput);
+            //Vector2 direction = new Vector2(horizontalInput, verticalInput);
             //anim.SetFloat("HorizontalAxis", direction.x);
             //anim.SetBool("OnGround", isGrounded);
 
@@ -122,6 +122,7 @@ public class PlayerMovement : MonoBehaviour
             shoot();
             if (Input.GetKey(KeyCode.Space))
             {
+                yRelative = getRelativeYPos();
                 boostEffect.Play();
                 canBoost = true;
             }
@@ -160,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Clamp the velocity to ensure it doesn't exceed the maximum speed
-        rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
+        //rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
 
 
         //Aerial Dash
@@ -178,16 +179,10 @@ public class PlayerMovement : MonoBehaviour
     {   
         if(canBoost)
         {
+            rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
             boost();
         }
     }
-
-    /*
-    public void Run(Vector2 dir)
-    {
-        rb.velocity = new Vector2(dir.x * speed, rb.velocity.y);
-    }
-    */
 
     void FlipCharacter()
     {

@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac4885dfe3bbcdf4687861e8e8a5dcea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
-  detectionRange: 10
+  moveSpeed: 4
+  detectionRange: 15
 --- !u!114 &7004327853930205084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ MonoBehaviour:
   radius: 0.75
   height: 2
   canMove: 1
-  maxSpeed: 3
+  maxSpeed: 4
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2
@@ -243,8 +243,8 @@ MonoBehaviour:
   pickNextWaypointDist: 1.2
   endReachedDistance: 0.2
   alwaysDrawGizmos: 0
-  slowWhenNotFacingTarget: 1
-  whenCloseToDestination: 0
+  slowWhenNotFacingTarget: 0
+  whenCloseToDestination: 1
   constrainInsideGraph: 0
 --- !u!114 &9114117824785217315
 MonoBehaviour:

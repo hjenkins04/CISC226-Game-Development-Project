@@ -119,20 +119,24 @@ namespace FrostFalls
         public event Action<bool, float> GroundedChanged;
         public event Action Jumped;
         public event Action Grappled;
+        public event Action FreeFall;
 
         private float _time; // Tracks elapsed time, used for input buffering and coyote time calculations
 
         private float originalGravityScale;
         private Coroutine resetGravityCoroutine;
+        private Animator _animator;
 
         private void Awake()
         {
             // Initialize components and create inital cache
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<CapsuleCollider2D>();
+            Debug.Log(_col);
             _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
             _lineRenderer = GetComponent<LineRenderer>() ?? gameObject.AddComponent<LineRenderer>();
             originalGravityScale = _rb.gravityScale;
+            _animator = GetComponentInChildren<Animator>();
         }
 
         // Start is called before the first frame update
@@ -147,6 +151,7 @@ namespace FrostFalls
             // Update time and gather player input for each frame
             _time += Time.deltaTime;
             GatherInput();
+            _animator.SetBool("OnGround", _grounded);
         }
 
         /// <summary>
@@ -235,7 +240,7 @@ namespace FrostFalls
         #region Collisions
 
         private float _frameLeftGrounded = float.MinValue; // Tracks the time when the player last left the ground
-        private bool _grounded; // Indicates whether the player is currently grounded
+        public bool _grounded; // Indicates whether the player is currently grounded
 
         /// <summary>
         /// Check for collisions with the ground and ceiling using capsule casts
@@ -243,34 +248,37 @@ namespace FrostFalls
         /// </summary>
         private void CheckCollisions()
         {
-            Physics2D.queriesStartInColliders = false;
+            // Starting point of the raycast at the bottom of the player collider
+            Vector2 rayStart = new Vector2(_col.bounds.center.x, _col.bounds.min.y);
+            float rayLength = GrounderDistance; // Distance to cast the ray downwards
 
-            // Capsule casts to detect ground and ceiling collisions
-            bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, GrounderDistance, ~PlayerLayer);
-            bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, GrounderDistance, ~PlayerLayer);
+            // Perform raycast downwards to check for ground
+            RaycastHit2D groundHit = Physics2D.Raycast(rayStart, Vector2.down, rayLength, ~PlayerLayer);
 
-            // Veiling collisions
-            if (ceilingHit) _frameVelocity.y = Mathf.Min(0, _frameVelocity.y);
-
-            // Ground detection
-            if (!_grounded && groundHit)
+            // Check the raycast result to update grounded
+            if (!groundHit.collider)
             {
-                _grounded = true;
-                _coyoteUsable = true;
-                _bufferedJumpUsable = true;
-                _endedJumpEarly = false;
-                GroundedChanged?.Invoke(true, Mathf.Abs(_frameVelocity.y));
+                if (_grounded)
+                {
+                    _grounded = false;
+                    _frameLeftGrounded = Time.time;
+                    GroundedChanged?.Invoke(false, 0); // Invoke event when becoming ungrounded
+                                                       // Check if not grappling and not jumping to determine if in free fall
+                    if (!_isGrappling && !_grounded)
+                    {
+                        FreeFall?.Invoke(); // Invoke free fall event or method
+                    }
+                }
             }
-            else if (_grounded && !groundHit)
+            else
             {
-                _grounded = false;
-                _frameLeftGrounded = _time;
-                GroundedChanged?.Invoke(false, 0);
+                if (!_grounded)
+                {
+                    _grounded = true;
+                    GroundedChanged?.Invoke(true, Mathf.Abs(_rb.velocity.y)); // Invoke event when grounded
+                }
             }
-
-            Physics2D.queriesStartInColliders = _cachedQueryStartInColliders;
         }
-
         #endregion
 
         #region Jumping
@@ -388,7 +396,10 @@ namespace FrostFalls
                 }
                 resetGravityCoroutine = StartCoroutine(ResetGravityScaleAfterDelay(2f)); // Adjust delay as needed
             }
-            //StopGrapple?.Invoke();
+            if (!_grounded)
+            {
+                FreeFall?.Invoke(); // Invoke free fall event
+            }
             _lineRenderer.positionCount = 0;
             _grappleUsable = true;
             _jumpAllowed = true;
@@ -611,6 +622,7 @@ namespace FrostFalls
         event Action<bool, float> GroundedChanged; // Event triggered when the grounded state changes
         event Action Jumped; // Event triggered when the player jumps
         event Action Grappled; // Event triggered when the player grapples
+        event Action FreeFall; // Event triggered when the player is freefalling
         Vector2 FrameInput { get; } // Current frame's input vector
     }
 

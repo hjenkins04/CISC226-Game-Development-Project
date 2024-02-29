@@ -19,7 +19,7 @@ public class StartGame : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
-        if (!ControlsMenu.controlVisible){
+        if (!ControlsMenu.controlVisible && !SettingsMenu.settingVisible){
             SceneManager.LoadScene(sceneName);
         }
         

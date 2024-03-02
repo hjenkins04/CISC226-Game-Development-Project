@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\PlayerAnimator.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\SettingsStore.cs" />
+    <Compile Include="Assets\UIController.cs" />
     <Compile Include="Assets\Scripts\GrappleScript.cs" />
     <Compile Include="Assets\Scripts\ControlsMenu.cs" />
     <Compile Include="Assets\Scripts\Weapon.cs" />

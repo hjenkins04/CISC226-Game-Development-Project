@@ -357,7 +357,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 854ceda9d389bfd46be3b5555957c38f, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -690,6 +690,7 @@ GameObject:
   - component: {fileID: 226107364}
   - component: {fileID: 226107363}
   - component: {fileID: 226107365}
+  - component: {fileID: 226107366}
   m_Layer: 5
   m_Name: Start
   m_TagString: Untagged
@@ -850,7 +851,19 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 2
+          m_CallState: 0
+--- !u!114 &226107366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 226107359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4beaa20797e3f7e4d9ba58058be36421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &260794209
 GameObject:
   m_ObjectHideFlags: 0
@@ -1208,6 +1221,7 @@ GameObject:
   - component: {fileID: 399234785}
   - component: {fileID: 399234784}
   - component: {fileID: 399234786}
+  - component: {fileID: 399234787}
   m_Layer: 5
   m_Name: Controls
   m_TagString: Untagged
@@ -1369,7 +1383,19 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 2
+          m_CallState: 0
+--- !u!114 &399234787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399234780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4beaa20797e3f7e4d9ba58058be36421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &406096473
 GameObject:
   m_ObjectHideFlags: 0
@@ -1460,6 +1486,7 @@ GameObject:
   - component: {fileID: 447244721}
   - component: {fileID: 447244718}
   - component: {fileID: 447244722}
+  - component: {fileID: 447244723}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -1621,7 +1648,19 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 2
+          m_CallState: 0
+--- !u!114 &447244723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447244716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4beaa20797e3f7e4d9ba58058be36421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &451560777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,6 +1822,7 @@ GameObject:
   - component: {fileID: 704067029}
   - component: {fileID: 704067031}
   - component: {fileID: 704067032}
+  - component: {fileID: 704067033}
   m_Layer: 5
   m_Name: Credits
   m_TagString: Untagged
@@ -1931,7 +1971,19 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
-          m_CallState: 2
+          m_CallState: 0
+--- !u!114 &704067033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 704067027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4beaa20797e3f7e4d9ba58058be36421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &707715535
 GameObject:
   m_ObjectHideFlags: 0
@@ -2797,7 +2849,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 06eb816e1803bea488371437c73b386c, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

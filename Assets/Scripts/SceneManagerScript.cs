@@ -7,7 +7,7 @@ public class SceneManagerScript : MonoBehaviour
 {
     // Start is called before the first frame update
     public void LoadScene(string sceneName){
-        if (!ControlsMenu.controlVisible){
+        if (!ControlsMenu.controlVisible && !SettingsMenu.settingVisible ){
             SceneManager.LoadScene(sceneName);
         }
         

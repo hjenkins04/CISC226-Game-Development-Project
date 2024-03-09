@@ -38,6 +38,9 @@ namespace FrostFalls
             _player.GroundedChanged += OnGroundedChanged;
             _player.Grappled += OnGrappled;
             _player.FreeFall += OnFreeFall;
+            _player.WallSlid += OnWallSlide;
+            _player.WallClimbed += OnWallClimb;
+            _player.WallJumped += OnWallJump;
             _moveParticles.Play();
         }
 
@@ -46,7 +49,10 @@ namespace FrostFalls
             _player.Jumped -= OnJumped;
             _player.GroundedChanged -= OnGroundedChanged;
             _player.Grappled -= OnGrappled;
-            _player.FreeFall += OnFreeFall;
+            _player.FreeFall -= OnFreeFall;
+            _player.FreeFall -= OnWallSlide;
+            _player.WallClimbed -= OnWallClimb;
+            _player.WallJumped -= OnWallJump;
             _moveParticles.Stop();
         }
 
@@ -69,11 +75,16 @@ namespace FrostFalls
                 // Flip only if the character is facing the opposite direction of movement
                 if ((shouldFaceLeft && transform.localScale.x > 0) || (!shouldFaceLeft && transform.localScale.x < 0))
                 {
-                    Vector3 theScale = transform.localScale;
-                    theScale.x *= -1;
-                    transform.localScale = theScale;
+                    SpriteFlip();
                 }
             }
+        }
+
+        private void SpriteFlip()
+        {
+            Vector3 theScale = transform.localScale;
+            theScale.x *= -1;
+            transform.localScale = theScale;
         }
 
         private void HandleIdleSpeed()
@@ -111,6 +122,21 @@ namespace FrostFalls
             _anim.ResetTrigger(JumpKey);
         }
 
+        private void OnWallSlide()
+        {
+            _anim.SetTrigger(WallSlideKey);
+
+        }
+
+        private void OnWallClimb(){
+            _anim.SetTrigger(WallClimbKey);
+        }
+
+        private void OnWallJump()
+        {
+            SpriteFlip();
+        }
+
         private void OnGroundedChanged(bool grounded, float impact)
         {
             _grounded = grounded;
@@ -133,5 +159,7 @@ namespace FrostFalls
         private static readonly int JumpKey = Animator.StringToHash("Jump");
         private static readonly int GrappleKey = Animator.StringToHash("Grapple");
         private static readonly int FreeFallKey = Animator.StringToHash("FreeFall");
+        private static readonly int WallSlideKey = Animator.StringToHash("WallSlide");
+        private static readonly int WallClimbKey = Animator.StringToHash("WallClimb");
     }
 }

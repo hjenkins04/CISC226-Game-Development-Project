@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace FrostFalls
@@ -19,8 +20,12 @@ namespace FrostFalls
         [Header("Settings Store")]
         #region Layers
         [Header("LAYERS")]
-        [Tooltip("Set this to the layer your player is on")]
+        [Tooltip("The layer your player is on")]
         public LayerMask PlayerLayer;
+
+        [Header("PLAYER")]
+        [Tooltip("The player sprite parent")]
+        public UnityEngine.Transform playerParentSprite;
         #endregion
 
         #region Input
@@ -33,6 +38,18 @@ namespace FrostFalls
 
         [Tooltip("Minimum input required before a left or right is recognized. Avoids drifting with sticky controllers"), Range(0.01f, 0.99f)]
         public float HorizontalDeadZoneThreshold = 0.1f;
+        #endregion
+
+        #region Tools/Weapons
+        [Header("Tools/Weaponse")]
+        [Tooltip("The players right pickaxe")]
+        public GameObject rightIcePickaxe;
+
+        [Tooltip("The players left pickaxe")]
+        public GameObject leftIcePickaxe;
+
+        [Tooltip("The players grappling gun")]
+        public GameObject grapplingGun;
         #endregion
 
         #region Movement
@@ -52,7 +69,7 @@ namespace FrostFalls
         [Tooltip("A constant downward force applied while grounded. Helps on slopes"), Range(0f, -10f)]
         public float GroundingForce = -1.5f;
 
-        [Tooltip("The detection distance for grounding and roof detection"), Range(0f, 0.5f)]
+        [Tooltip("The detection distance for grounding and roof detection"), Range(0f, 2f)]
         public float GrounderDistance = 0.05f;
         #endregion
 
@@ -79,12 +96,31 @@ namespace FrostFalls
 
         #region Grapple
         [Header("GRAPPLE")]
-        [Tooltip("Set this to the layers considered grappleable surfaces")]
+        [Tooltip("The layers considered grappleable surfaces")]
         public LayerMask GrappleableLayers;
+
         [Tooltip("Maximum distance the grappling hook can travel from the player to attach to a grappleable surface")]
         public float GrappleDistance = 10f;
+
         [Tooltip("Position from where the grapple is shot, typically the player's hand or a grappling device")]
         public UnityEngine.Transform direction;
+        #endregion
+
+        #region WallClimb
+        [Header("WALLCLIMB")]
+        [Tooltip("Set this to the layers considered climbable surfaces")]
+        public LayerMask ClimbableLayers;
+        [Tooltip("The allowed disance between the player and a wall"), Range(0f, 2f)]
+        public float WalledDistance;
+        [Tooltip("The wall slide speed")]
+        public float WallSlideSpeed;
+        [Tooltip("The wall climb speed")]
+        public float WallClimbSpeed;
+        [Tooltip("The horizontal jump force")]
+        public float HorizontalJumpPower = 10f;
+        [Tooltip("Wall jump duration")]
+        public float WallJumpDuration = 2.0f;
+
         #endregion
 
         #endregion
@@ -120,6 +156,12 @@ namespace FrostFalls
         public event Action Jumped;
         public event Action Grappled;
         public event Action FreeFall;
+        public event Action WallSlid;
+        public event Action WallClimbed;
+        public event Action WallJumped;
+
+        // Pickaxe
+        public bool _hasPickaxe = true;
 
         private float _time; // Tracks elapsed time, used for input buffering and coyote time calculations
 
@@ -152,6 +194,8 @@ namespace FrostFalls
             _time += Time.deltaTime;
             GatherInput();
             _animator.SetBool("OnGround", _grounded);
+            _animator.SetBool("Walled", _walled);
+            _animator.SetBool("HasPickaxe", _hasPickaxe);
         }
 
         /// <summary>
@@ -168,8 +212,10 @@ namespace FrostFalls
                 StopGrapple = Input.GetMouseButtonUp(0),
                 Boost = Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.Space),
                 StopBoost = Input.GetKeyUp(KeyCode.Space),
-                Dash = Input.GetKeyDown(KeyCode.Q)
-
+                Dash = Input.GetKeyDown(KeyCode.Q),
+                ToolSwap = Input.GetMouseButtonDown(1),
+                WallClimb = Input.GetMouseButton(0),
+                StopWallClimb = Input.GetMouseButtonUp(0)
             };
 
             // Mark jump input for processing
@@ -208,12 +254,31 @@ namespace FrostFalls
             {
                 _dashToConsume = true;
             }
+
+            //Mark tool swap for processing
+            if (_frameInput.ToolSwap)
+            {
+                _toolSwapToConsume = true;
+            }
+
+            //Mark wall climb input for processing
+            if (_frameInput.WallClimb)
+            {
+                _wallClimbToConsume = true;
+            }
+
+            //Mark wall climb release for processing
+            if (_frameInput.StopWallClimb)
+            {
+                _stopWallClimbToConsume = true;
+            }
         }
 
         private void FixedUpdate()
         {
             // Perform physics and movement calculations at a fixed intervals
             CheckCollisions();
+            WallCheck();
             HandleJump();
             HandleGrapple();
             HandleBoost();
@@ -221,6 +286,8 @@ namespace FrostFalls
             HandleDirection();
             HandleGravity();
             ApplyMovement();
+            HandleToolSwap();
+            HandleWallClimb();
 
             // _rb.velocity = new Vector2(_frameVelocity.x, _frameVelocity.y);
 
@@ -229,18 +296,41 @@ namespace FrostFalls
                 // Allow the joint distance to decrease while the player is grounded so they don't get stuck
                 _joint.maxDistanceOnly = true;
             }
+
+
+            // Fix upwards float glitch after jumping from wall
+            //if (!_walled && (_isWallClimbing || _isWallSliding))
+            if (!_walled && _hasPickaxe)
+            {
+                _isWallClimbing = false;
+                _isWallSliding = false;
+                //if(!_grounded) FreeFall?.Invoke();
+            }
+            //if (_grounded == true || !_walled) _isWallSliding = false;
         }
 
         private void LateUpdate()
         {
             //  Visually update grappling rope's position
             UpdateGrappleRope();
+
+            if (!_hasPickaxe)
+            {
+                _isWallClimbing = false;
+                _isWallSliding = false;
+            }
+            if (_hasPickaxe && _isGrappling)
+            {
+                StopGrapple();
+                _isGrappling = false;
+            }
         }
 
         #region Collisions
 
         private float _frameLeftGrounded = float.MinValue; // Tracks the time when the player last left the ground
         public bool _grounded; // Indicates whether the player is currently grounded
+        public bool _walled; // Indicates whether the player is currently against a climbable wall
 
         /// <summary>
         /// Check for collisions with the ground and ceiling using capsule casts
@@ -264,7 +354,7 @@ namespace FrostFalls
                     _frameLeftGrounded = Time.time;
                     GroundedChanged?.Invoke(false, 0); // Invoke event when becoming ungrounded
                                                        // Check if not grappling and not jumping to determine if in free fall
-                    if (!_isGrappling && !_grounded)
+                    if (!_isWallClimbing && !_isWallSliding && !_isGrappling && !_grounded)
                     {
                         FreeFall?.Invoke(); // Invoke free fall event or method
                     }
@@ -277,6 +367,33 @@ namespace FrostFalls
                     _grounded = true;
                     GroundedChanged?.Invoke(true, Mathf.Abs(_rb.velocity.y)); // Invoke event when grounded
                 }
+            }
+        }
+        /// <summary>
+        /// </summary>
+        private void WallCheck()
+        {
+            //_walled =  Physics2D.OverlapCircle(wallCheck.position, 0.2f, ClimbableLayers);
+
+            // Starting point of the raycast at the bottom of the player collider
+            Vector2 rayStart = new Vector2(_col.bounds.min.x, _col.bounds.center.y);
+            float rayLength = WalledDistance; // Distance to cast the ray forwards
+
+            // Determine which way the player is facing
+            Vector2 direction = playerParentSprite.localScale.x < 1 ? Vector2.left : Vector2.right;
+
+            RaycastHit2D wallHit = Physics2D.Raycast(rayStart, direction, rayLength, ClimbableLayers);
+
+            //_walled = wallHit.collider != null; // If the collider is hit, set _walled to true
+
+            // Check the raycast result to update grounded
+            if (wallHit.collider)
+            {
+                _walled = true;
+            }
+            else
+            {
+                _walled = false;
             }
         }
         #endregion
@@ -300,6 +417,8 @@ namespace FrostFalls
             if (!_endedJumpEarly && !_grounded && !_frameInput.JumpHeld && _rb.velocity.y > 0) _endedJumpEarly = true;
 
             if (!_jumpToConsume && !HasBufferedJump) return;
+
+            if (_jumpAllowed && !_grounded && _isWallClimbing || _isWallSliding) WallJump();
 
             if (_jumpAllowed && (_grounded || CanUseCoyote)) ExecuteJump();
 
@@ -336,9 +455,9 @@ namespace FrostFalls
         {
             if (!_grappleToConsume && !_stopGrappleToConsume) return;
 
-            if (_grappleUsable && _grappleToConsume) StartGrapple();
+            if (_grappleUsable && _grappleToConsume && !_hasPickaxe) StartGrapple();
 
-            if (_stopGrappleToConsume) StopGrapple();
+            if ((_stopGrappleToConsume && !_hasPickaxe) || (_isGrappling && _hasPickaxe)) StopGrapple();
 
             _grappleToConsume = false;
             _stopGrappleToConsume = false;
@@ -426,6 +545,83 @@ namespace FrostFalls
                 _jumpAllowed = false;
             }
         }
+        #endregion
+
+        #region WallClimb
+        public bool _wallClimbToConsume; // Indicates a wall climb input that needs to be processed
+        private bool _stopWallClimbToConsume; // Indicates a wall climb release input that needs to be processed
+        public bool _isWallClimbing = false; // WallClimb is currently active
+        public bool _isWallSliding = false; // WallSlide is currently active
+        public bool _isWallJumping = false;
+
+        /// <summary>
+        /// </summary>
+        private void HandleWallClimb()
+        {   
+            // Prevent Loop
+            if (_wallClimbToConsume && _isWallClimbing) _wallClimbToConsume = false;
+
+            if (_walled && !_isWallClimbing && (!_wallClimbToConsume || !_stopWallClimbToConsume) && _hasPickaxe && !_grounded) WallSlide();
+            if (_walled && !_isWallClimbing && _isWallSliding && _hasPickaxe && !_grounded) WallSlide();
+
+            if (_walled && _wallClimbToConsume && _hasPickaxe) StartWallClimb();
+
+            if ((_walled && _stopWallClimbToConsume) || !_hasPickaxe) StopWallClimb();
+
+            _wallClimbToConsume = false;
+            _stopWallClimbToConsume = false;
+        }
+
+        /// <summary>
+        /// </summary>
+        private void StartWallClimb()
+        {
+            _isWallClimbing = true;
+            _isWallSliding = false;
+            _frameVelocity.y = WallClimbSpeed;
+            WallClimbed?.Invoke();
+        }
+
+        /// <summary>
+        /// </summary>
+        private void WallSlide()
+        {
+            _isWallSliding = true;
+            _frameVelocity.y = Mathf.MoveTowards(0, -MaxFallSpeed, WallSlideSpeed*100 * Time.fixedDeltaTime);
+            WallSlid?.Invoke();
+        }
+
+        /// <summary>
+        /// </summary>
+        private void WallJump()
+        {
+            _isWallJumping = true;
+
+            if (_isWallClimbing) {
+                _frameVelocity.y = (JumpPower/5)*3;
+            }
+            else
+            {
+                _frameVelocity.y = JumpPower * 3; // Apply upward force
+            }
+
+            // Determine direction to apply horizontal jump force based on the player's direction
+            float horizontalJumpDirection = playerParentSprite.localScale.x < 0 ? 1 : -1;
+
+            // Apply the horizontal jump force
+            _frameVelocity.x = HorizontalJumpPower * horizontalJumpDirection;
+
+            WallJumped?.Invoke(); // Invoke the Jumped
+        }
+
+        /// <summary>
+        /// </summary>
+        private void StopWallClimb()
+        {
+            _isWallClimbing = false;
+            if (_hasPickaxe) WallSlide();
+        }
+
         #endregion
 
         #region Boost
@@ -568,6 +764,10 @@ namespace FrostFalls
         /// </summary>
         private void HandleGravity()
         {
+            if (_isWallSliding || _isWallClimbing)
+            {
+                return;
+            }
             if (_grounded && _frameVelocity.y <= 0f)
             {
                 _frameVelocity.y = GroundingForce; // Applies a small force to keep the player grounded.
@@ -580,6 +780,28 @@ namespace FrostFalls
             }
         }
 
+        #endregion
+
+        #region ToolSwap
+        private bool _toolSwapToConsume; // Indicates a tool swap input that needs to be processed
+        private void HandleToolSwap()
+        {
+            if (!_toolSwapToConsume) return;
+
+            if (_toolSwapToConsume) ToolSwap();
+
+            _toolSwapToConsume = false;
+        }
+        private void ToolSwap()
+        {
+            _hasPickaxe = !_hasPickaxe;
+            // Toggle the active or inactive state of the ice pickaxes
+            rightIcePickaxe.SetActive(_hasPickaxe);
+            leftIcePickaxe.SetActive(_hasPickaxe);
+
+            // Toggle the active or inactive state of the grappling gun
+            grapplingGun.SetActive(!_hasPickaxe);
+        }
         #endregion
 
         /// <summary>
@@ -614,6 +836,10 @@ namespace FrostFalls
             public bool Boost; // Indicates if the boost button was pressed this frame
             public bool StopBoost; // Indicates if the boost release button was pressed this frame
             public bool Dash; // Indicates if the dash button was pressed this frame
+            public bool ToolSwap; // Indicates if the current tool needs to be swapped on this frame
+            public bool WallClimb; // Indicates if the wall climb button was pressed this frame
+            public bool StopWallClimb; // Indicates if the wall climb release button was pressed this frame
+            public bool WallClimbHoldOnJump; // Indicates if the wall climb button is being pressed during during a wall jump
     }
 
     // Interface for events and properties for the player controller
@@ -623,6 +849,9 @@ namespace FrostFalls
         event Action Jumped; // Event triggered when the player jumps
         event Action Grappled; // Event triggered when the player grapples
         event Action FreeFall; // Event triggered when the player is freefalling
+        event Action WallSlid; // Event triggered when the player wall slides
+        event Action WallClimbed; // Event triggered when the player wall climbs
+        event Action WallJumped; // Event triggered when the player wall jumps
         Vector2 FrameInput { get; } // Current frame's input vector
     }
 

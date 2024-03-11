@@ -21,6 +21,7 @@ public class StartGame : MonoBehaviour
     {
         if (!ControlsMenu.controlVisible && !SettingsMenu.settingVisible){
             SceneManager.LoadScene(sceneName);
+            Time.timeScale = 1;
         }
         
     }

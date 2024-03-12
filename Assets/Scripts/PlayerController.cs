@@ -138,6 +138,7 @@ namespace FrostFalls
 
         // player position 
         public Vector2 RespawnPosition;
+        public Vector2 currentPos;
 
         // Boost Mechanic
         private bool _allowedBoost;
@@ -201,6 +202,7 @@ namespace FrostFalls
             _animator.SetBool("OnGround", _grounded);
             _animator.SetBool("Walled", _walled);
             _animator.SetBool("HasPickaxe", _hasPickaxe);
+            currentPos = transform.position;
         }
 
         /// <summary>

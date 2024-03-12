@@ -12,6 +12,8 @@ public class TextVisibilty : MonoBehaviour
     public Transform chestTransform;
     public float proximityDistance = 3f;
     public TextMeshProUGUI displayText;
+
+    public bool interactable;
     // Start is called before the first frame update
     void Start()
     {

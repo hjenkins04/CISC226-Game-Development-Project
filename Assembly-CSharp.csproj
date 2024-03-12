@@ -64,10 +64,14 @@
     <Compile Include="Assets\Scripts\Projectile.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement2.cs" />
     <Compile Include="Assets\Scripts\RangedEnemy.cs" />
+    <Compile Include="Assets\Scripts\TextVisibilty.cs" />
     <Compile Include="Assets\Scripts\FlyingEnemy.cs" />
     <Compile Include="Assets\Scripts\PlayerAnimator.cs" />
+    <Compile Include="Assets\Scripts\ChestPos.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
+    <Compile Include="Assets\textController.cs" />
     <Compile Include="Assets\Scripts\SettingsStore.cs" />
+    <Compile Include="Assets\Scripts\CheckpointController.cs" />
     <Compile Include="Assets\UIController.cs" />
     <Compile Include="Assets\Scripts\GrappleScript.cs" />
     <Compile Include="Assets\Scripts\ControlsMenu.cs" />

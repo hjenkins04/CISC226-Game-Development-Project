@@ -145,6 +145,10 @@ namespace FrostFalls
         private DistanceJoint2D _joint; // Restricts the player's movement to within a certain distance from the grapple point
         private Vector2 _grapplePoint; // Game world grappling hook attach point
 
+        // player position 
+        public Vector2 RespawnPosition;
+        public Vector2 currentPos;
+
         // Boost Mechanic
         private bool _allowedBoost;
         private int _yRelative;
@@ -196,6 +200,8 @@ namespace FrostFalls
         private void Start()
         {
             //Time since last dash
+            transform.position = new Vector2(-16f, -12f);
+            RespawnPosition = transform.position;
             _currentDashWaitTime = Time.time;
         }
 
@@ -207,6 +213,7 @@ namespace FrostFalls
             _animator.SetBool("OnGround", _grounded);
             _animator.SetBool("Walled", _walled);
             _animator.SetBool("HasPickaxe", _hasPickaxe);
+            currentPos = transform.position;
         }
 
         /// <summary>

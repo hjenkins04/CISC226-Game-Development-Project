@@ -10,7 +10,7 @@ public class SoundOnHover : MonoBehaviour, IPointerEnterHandler
 
     // Start is called before the first frame update
     void Start()
-    {
+    {   
         GameObject sfxSourceObj = GameObject.Find("SFX Source") ?? GameObject.FindGameObjectWithTag("SFXSourceTag");
         if (sfxSourceObj != null)
         {

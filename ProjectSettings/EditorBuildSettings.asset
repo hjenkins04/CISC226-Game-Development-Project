@@ -9,7 +9,10 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/Unused.unity
+    path: Assets/Scenes/Level Design.unity
+    guid: fac001630ded2884f851268480b82bf8
+  - enabled: 0
+    path: Assets/Scenes/Level Design new.unity
     guid: 69c5f2ecc7cbf34499607de0b1f480c5
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity

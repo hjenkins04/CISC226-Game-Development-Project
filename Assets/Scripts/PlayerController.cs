@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEditor.Experimental.GraphView.GraphView;
@@ -110,16 +111,24 @@ namespace FrostFalls
         [Header("WALLCLIMB")]
         [Tooltip("Set this to the layers considered climbable surfaces")]
         public LayerMask ClimbableLayers;
+
         [Tooltip("The allowed disance between the player and a wall"), Range(0f, 2f)]
         public float WalledDistance;
+
         [Tooltip("The wall slide speed")]
         public float WallSlideSpeed;
+
         [Tooltip("The wall climb speed")]
         public float WallClimbSpeed;
+
         [Tooltip("The horizontal jump force")]
         public float HorizontalJumpPower = 10f;
+
         [Tooltip("Wall jump duration")]
         public float WallJumpDuration = 2.0f;
+
+        [Tooltip("Wall jump cooldown duration")]
+        public float WallJumpCoolDown = 1.0f;
 
         #endregion
 
@@ -167,8 +176,10 @@ namespace FrostFalls
         // Pickaxe
         public bool _hasPickaxe = true;
 
-        private float _time; // Tracks elapsed time, used for input buffering and coyote time calculations
+        // Elapsed time
+        private float _time;
 
+        // Other
         private float originalGravityScale;
         private Coroutine resetGravityCoroutine;
         private Animator _animator;
@@ -383,7 +394,7 @@ namespace FrostFalls
             //_walled =  Physics2D.OverlapCircle(wallCheck.position, 0.2f, ClimbableLayers);
 
             // Starting point of the raycast at the bottom of the player collider
-            Vector2 rayStart = new Vector2(_col.bounds.min.x, _col.bounds.center.y);
+            Vector2 rayStart = new Vector2(_col.bounds.min.x, _col.bounds.max.y);
             float rayLength = WalledDistance; // Distance to cast the ray forwards
 
             // Determine which way the player is facing
@@ -391,7 +402,6 @@ namespace FrostFalls
 
             RaycastHit2D wallHit = Physics2D.Raycast(rayStart, direction, rayLength, ClimbableLayers);
 
-            //_walled = wallHit.collider != null; // If the collider is hit, set _walled to true
 
             // Check the raycast result to update grounded
             if (wallHit.collider)
@@ -402,6 +412,8 @@ namespace FrostFalls
             {
                 _walled = false;
             }
+
+            Debug.DrawRay(rayStart, direction * rayLength, _walled ? Color.green : Color.red);
         }
         #endregion
 
@@ -425,9 +437,9 @@ namespace FrostFalls
 
             if (!_jumpToConsume && !HasBufferedJump) return;
 
-            if (_jumpAllowed && !_grounded && _isWallClimbing || _isWallSliding) WallJump();
+            if (_jumpAllowed && !_grounded && (_isWallClimbing || _isWallSliding)) WallJump();
 
-            if (_jumpAllowed && (_grounded || CanUseCoyote)) ExecuteJump();
+            if (_jumpAllowed && !_walled && (_grounded || CanUseCoyote)) ExecuteJump();
 
             _jumpToConsume = false;
         }
@@ -555,16 +567,16 @@ namespace FrostFalls
         #endregion
 
         #region WallClimb
-        public bool _wallClimbToConsume; // Indicates a wall climb input that needs to be processed
+        private bool _wallClimbToConsume; // Indicates a wall climb input that needs to be processed
         private bool _stopWallClimbToConsume; // Indicates a wall climb release input that needs to be processed
-        public bool _isWallClimbing = false; // WallClimb is currently active
-        public bool _isWallSliding = false; // WallSlide is currently active
-        public bool _isWallJumping = false;
+        private bool _isWallClimbing = false; // WallClimb is currently active
+        private bool _isWallSliding = false; // WallSlide is currently active
+        private float _lastWallJumpTime = -Mathf.Infinity;
 
         /// <summary>
         /// </summary>
         private void HandleWallClimb()
-        {   
+        {
             // Prevent Loop
             if (_wallClimbToConsume && _isWallClimbing) _wallClimbToConsume = false;
 
@@ -594,7 +606,7 @@ namespace FrostFalls
         private void WallSlide()
         {
             _isWallSliding = true;
-            _frameVelocity.y = Mathf.MoveTowards(0, -MaxFallSpeed, WallSlideSpeed*100 * Time.fixedDeltaTime);
+            _frameVelocity.y = Mathf.MoveTowards(0, -MaxFallSpeed, WallSlideSpeed * 100 * Time.fixedDeltaTime);
             WallSlid?.Invoke();
         }
 
@@ -602,10 +614,11 @@ namespace FrostFalls
         /// </summary>
         private void WallJump()
         {
-            _isWallJumping = true;
+            if (_time - _lastWallJumpTime < WallJumpCoolDown) return;
 
-            if (_isWallClimbing) {
-                _frameVelocity.y = (JumpPower/5)*3;
+            if (_isWallClimbing)
+            {
+                _frameVelocity.y = (JumpPower / 5) * 3;
             }
             else
             {
@@ -619,6 +632,8 @@ namespace FrostFalls
             _frameVelocity.x = HorizontalJumpPower * horizontalJumpDirection;
 
             WallJumped?.Invoke(); // Invoke the Jumped
+
+            _lastWallJumpTime = _time;
         }
 
         /// <summary>
@@ -699,7 +714,7 @@ namespace FrostFalls
                 _stopGrappleToConsume = false;
             }
         }
-      
+
         /// <summary>
         /// Stops a boost if the key has been released
         /// </summary>
@@ -723,7 +738,7 @@ namespace FrostFalls
 
             _dashToConsume = false;
         }
-        
+
         /// <summary>
         /// Applies a dash if the dash is available and the key has been pressed
         /// </summary>
@@ -832,7 +847,6 @@ namespace FrostFalls
             _rb.gravityScale = originalGravityScale;
         }
     }
-
         public struct FrameInput
         {
             public bool JumpDown; // Indicates if the jump button was pressed this frame
@@ -847,7 +861,8 @@ namespace FrostFalls
             public bool WallClimb; // Indicates if the wall climb button was pressed this frame
             public bool StopWallClimb; // Indicates if the wall climb release button was pressed this frame
             public bool WallClimbHoldOnJump; // Indicates if the wall climb button is being pressed during during a wall jump
-    }
+        }
+  
 
     // Interface for events and properties for the player controller
     public interface IPlayerController

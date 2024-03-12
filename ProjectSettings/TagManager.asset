@@ -19,7 +19,7 @@ TagManager:
   - Wall
   - Player
   - GTerrain
-  - 
+  - Projectile
   - 
   - 
   - 
@@ -48,6 +48,9 @@ TagManager:
   - name: Background
     uniqueID: 1700776161
     locked: 0
+  - name: Underlayer
+    uniqueID: 1324722953
+    locked: 0
   - name: Terrain
     uniqueID: 530665925
     locked: 0
@@ -56,4 +59,10 @@ TagManager:
     locked: 0
   - name: Other
     uniqueID: 2471095719
+    locked: 0
+  - name: Characters
+    uniqueID: 4047443079
+    locked: 0
+  - name: Projectiles
+    uniqueID: 141935405
     locked: 0

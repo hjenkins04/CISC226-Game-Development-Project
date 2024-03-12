@@ -1,45 +1,148 @@
 using UnityEngine;
+using System.Collections;
 
 public class RangedEnemy : MonoBehaviour
 {
-    public GameObject projectilePrefab;
-    public float projectileSpeed = 5f;
-    public float fireRate = 2f;
-    public float moveSpeed = 2f;
+    [Header("References")]
+    [Tooltip("The enemy animator")]
+    [SerializeField] private Animator _anim;
+    [Tooltip("The enemey projectile ex. snowball")]
+    [SerializeField] public GameObject projectilePrefab;
+    [Tooltip("Where the projectile should be launched from")]
+    [SerializeField] public Transform projectileSpawnPoint;
+    [Tooltip("All ground layers for enemy collision and efge detection")]
+    [SerializeField] public LayerMask groundLayer;
+    [Tooltip("Edge detection point")]
+    [SerializeField] public Transform groundDetectionPoint;
+    [Tooltip("Ground detection distance")]
+    [SerializeField] public float groundDetectionDistance = 2f;
+    [Tooltip("The player object")]
+    [SerializeField] public Transform player;
 
-    private Transform player;
 
-    private float nextFireTime;
+    [Header("Projectile Properties")]
+    [Tooltip("The projectiles speed")]
+    [SerializeField] public float projectileSpeed = 5f;
+    [Tooltip("The enemy's fire rate")]
+    [SerializeField] public float fireRate = 2f;
+    [Tooltip("The enemy's throw delay from the start of the throw anamation")]
+    [SerializeField] public float throwDelay;
 
-    void Start() {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-    }
+    [Header("Movement Properties")]
+    [Tooltip("The enemy movement spped")]
+    [SerializeField] public float moveSpeed = 2f;
+    [Tooltip("The enemy detection distance")]
+    [SerializeField] public float detectionRadius = 10f;
+    [Tooltip("The player layer")]
+    [SerializeField] public LayerMask playerLayer;
+
+    private float _nextFireTime;
+    private bool _throwing = false;
+    private bool _foundPlayer = false;
+
 
     void Update()
     {
-        transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+        _anim.SetBool("Throwing", _throwing);
+        _anim.SetBool("Patroling",!_foundPlayer);
+        CheckForPlayer();
 
-        if (Time.time > nextFireTime)
+        if (_foundPlayer)
         {
-            nextFireTime = Time.time + 1f / fireRate;
-            FireProjectile();
+            FacePlayer();
+
+            if (Time.time >= _nextFireTime && !_throwing)
+            {
+                _nextFireTime = Time.time + 1f / fireRate;
+                _anim.SetTrigger(YetiThrow);
+                StartCoroutine(FireProjectileAfterAnimation(throwDelay));
+                _throwing = true;
+            }
         }
+        else
+        {
+            Move();
+            CheckForEdgeOrObstacle();
+        }
+    }
+
+
+    void Move()
+    {
+        float moveDirection = transform.localScale.x < 0 ? 1f : -1f; // Flipped logic based on left natural facing direction
+        transform.Translate(Vector2.right * moveDirection * moveSpeed * Time.deltaTime);
+    }
+
+    void FacePlayer()
+    {
+        float directionToPlayer = player.position.x - transform.position.x;
+
+        // Flip only if the player is on the opposite side from the facing direction
+        if ((directionToPlayer > 0 && transform.localScale.x > 0) || (directionToPlayer < 0 && transform.localScale.x < 0))
+        {
+            Flip();
+        }
+    }
+
+    IEnumerator FireProjectileAfterAnimation(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        FireProjectile();
+        _throwing = false;
     }
 
     void FireProjectile()
     {
-        Vector2 direction = (player.position - transform.position).normalized;
-        GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-        
+        Vector2 direction = (player.position - projectileSpawnPoint.position).normalized;
+        GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
         rb.velocity = direction * projectileSpeed;
     }
 
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("EnemyMovementCollider")) {
-            Vector3 newRotation = transform.eulerAngles;
-            newRotation.y += 180f;
-            transform.eulerAngles = newRotation;
+    void CheckForPlayer()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRadius, playerLayer);
+        _foundPlayer = hits.Length > 0;
+    }
+
+    void CheckForEdgeOrObstacle()
+    {
+        Vector2 forwardDirection = transform.localScale.x < 0 ? Vector2.right : Vector2.left;
+        bool isGroundAhead = Physics2D.Raycast(groundDetectionPoint.position, Vector2.down, groundDetectionDistance, groundLayer);
+
+        if (!isGroundAhead || Physics2D.Raycast(groundDetectionPoint.position, forwardDirection, groundDetectionDistance, groundLayer))
+        {
+            Flip();
         }
     }
+
+    // NOT USED
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+        {
+            Flip();
+        }
+    }
+
+    void Flip()
+    {
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+        Vector2 forwardDirection = transform.localScale.x > 0 ? Vector2.right : Vector2.left;
+        Vector3 detectionDirection = forwardDirection * (transform.eulerAngles.y >= 180 ? -1 : 1); // Adjust based on enemy's facing direction
+        Gizmos.color = Color.blue; // Use a different color to distinguish this line
+        Gizmos.DrawLine(groundDetectionPoint.position, groundDetectionPoint.position + detectionDirection * groundDetectionDistance);
+    }
+
+    private static readonly int YetiThrow = Animator.StringToHash("YetiThrow");
 }

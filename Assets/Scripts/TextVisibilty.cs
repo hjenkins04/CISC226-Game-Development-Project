@@ -12,10 +12,12 @@ public class TextVisibilty : MonoBehaviour
     public Transform chestTransform;
     public float proximityDistance = 3f;
     public TextMeshProUGUI displayText;
+
+    public static bool interactable;
     // Start is called before the first frame update
     void Start()
     {
-        
+        interactable = false;
     }
 
     // Update is called once per frame
@@ -30,11 +32,19 @@ public class TextVisibilty : MonoBehaviour
             {
                 // Show the text
                 displayText.text = "Press \"E\" to interact";
+                if (Input.GetKeyDown(KeyCode.E)){
+                    interactable = !interactable;
+                    print(interactable);
+                }
+                
             }
             else
-            {
-                // Hide the text
+            {  // Hide the text
                 displayText.text = "";
+                if (distanceToPlayer > 20f){
+                    interactable = false;
+                }
+                
             }
         }
         

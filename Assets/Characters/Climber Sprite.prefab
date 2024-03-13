@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1367353231385404567}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Upper Arm Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 587260708519199408}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7833953, w: 0.6215238}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7124329, w: 0.70174026}
   m_LocalPosition: {x: -0.13628894, y: 0.7977878, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6407982804917109543}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Arm Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,11 +56,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 602661010573526415}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.0000010058284, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.009521508, w: 0.9999547}
   m_LocalPosition: {x: 0.259, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7106680818288139628}
   m_Father: {fileID: 8528186971058677661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &631088033451452054
@@ -72,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7736200907218818918}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Upper Leg Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +88,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 631088033451452054}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7121411, w: 0.7020364}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7121414, w: 0.7020361}
   m_LocalPosition: {x: 0.07160711, y: 0.30630022, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -104,7 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5667057554992053392}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Upper Leg Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,13 +120,44 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 763862688894937316}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7120636, w: 0.70211494}
+  m_LocalRotation: {x: 0, y: 0, z: -0.71222883, w: 0.70194745}
   m_LocalPosition: {x: -0.11070174, y: 0.31269702, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 923337422418832712}
   m_Father: {fileID: 1416089814183624078}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -109.833}
+--- !u!1 &813222329325584802
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3434903723155254995}
+  m_Layer: 8
+  m_Name: Bat Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3434903723155254995
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813222329325584802}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.0020119445, y: 3.02, z: 0}
+  m_LocalScale: {x: 0.67064816, y: 1.0059723, z: 0.33532408}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5540167242461400722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1016566802209343549
 GameObject:
@@ -137,7 +169,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3392529384903175877}
   - component: {fileID: 2297836498067818687}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Leg Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,7 +232,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7180259580395316003}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Upper Arm Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,8 +247,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2125490674553763420}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.6555503, w: 0.75515157}
-  m_LocalPosition: {x: 0.08866525, y: 0.80738306, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -0.631393, w: 0.77546304}
+  m_LocalPosition: {x: 0.08439129, y: 0.8073833, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -233,7 +265,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5737413311293837394}
   - component: {fileID: 7598144322920320863}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Arm Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,6 +319,90 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0, w: 0}
     - {x: 0, y: 0, z: 0, w: 0}
   m_Flip: 1
+--- !u!1 &2317380644081245824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7106680818288139628}
+  - component: {fileID: 5585016519792968129}
+  m_Layer: 0
+  m_Name: Right Ice Pickaxe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7106680818288139628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2317380644081245824}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0.02876932, w: 0.9995861}
+  m_LocalPosition: {x: 0.012, y: 0.146, z: 0}
+  m_LocalScale: {x: 0.7747862, y: 0.7747861, z: 0.7747863}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6407982804917109543}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 3.297}
+--- !u!212 &5585016519792968129
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2317380644081245824}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 6
+  m_Sprite: {fileID: 21300000, guid: acc4b30333e94124bb99037851064a7c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.33, y: 0.67}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &2591253497538756809
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +412,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1194948647551057733}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Arm Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -312,7 +428,7 @@ Transform:
   m_GameObject: {fileID: 2591253497538756809}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.7057189, w: 0.708492}
-  m_LocalPosition: {x: -0.1768526, y: 0.3607454, z: 0}
+  m_LocalPosition: {x: -0.143, y: 0.354, z: 0}
   m_LocalScale: {x: 0.36791763, y: 0.36791763, z: 0.3679176}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -327,7 +443,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1816557751488653338}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Backpack Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -358,7 +474,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9133345159242006477}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,7 +505,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4925056323234955627}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Lower Leg Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421,7 +537,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8204623765031375793}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Leg Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,7 +568,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1797581045211575960}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Arm Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -467,11 +583,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4512772821317128243}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.000009670853, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.011487681, w: 0.9999341}
   m_LocalPosition: {x: 0.276, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4037624208035719130}
   m_Father: {fileID: 4039974262923375861}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4661339970794894994
@@ -483,7 +600,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4493928850485794691}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Leg Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -498,7 +615,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4661339970794894994}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.0013982635, w: 0.99999905}
+  m_LocalRotation: {x: -0, y: -0, z: 0.0013986509, w: 0.9999991}
   m_LocalPosition: {x: 0.177, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -516,7 +633,8 @@ GameObject:
   - component: {fileID: 1416089814183624078}
   - component: {fileID: 1462221593468761084}
   - component: {fileID: 7003091816650678657}
-  m_Layer: 0
+  - component: {fileID: 9137228679757038713}
+  m_Layer: 8
   m_Name: Climber Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -531,7 +649,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4978512719451206675}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.0350008, y: -0.047, z: 0}
   m_LocalScale: {x: 1.4910948, y: 0.99406326, z: 2.9821897}
   m_ConstrainProportionsScale: 0
@@ -597,6 +715,58 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!212 &9137228679757038713
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4978512719451206675}
+  m_Enabled: 0
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &5610700838880914662
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,7 +776,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8528186971058677661}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Lower Arm Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -621,7 +791,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5610700838880914662}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.1164072, w: 0.9932016}
+  m_LocalRotation: {x: 0, y: 0, z: 0.00000012579878, w: 1}
   m_LocalPosition: {x: 0.18283488, y: 0.000000023984226, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
@@ -638,7 +808,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1129054176889498461}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Solvers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -673,7 +843,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6111074771678919797}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Arm Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -704,7 +874,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5540167242461400722}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Targets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -728,6 +898,8 @@ Transform:
   - {fileID: 1194948647551057733}
   - {fileID: 8204623765031375793}
   - {fileID: 9025164088145798950}
+  - {fileID: 3434903723155254995}
+  - {fileID: 6978813796561695995}
   m_Father: {fileID: 1416089814183624078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6017605670167970819
@@ -739,7 +911,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4039974262923375861}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Lower Arm Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -754,14 +926,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6017605670167970819}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.04302769, w: 0.9990739}
+  m_LocalRotation: {x: 0, y: 0, z: -0.00000013770808, w: 1}
   m_LocalPosition: {x: 0.16690709, y: 0.00000004047142, z: 0}
   m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1797581045211575960}
   m_Father: {fileID: 7180259580395316003}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.059}
 --- !u!1 &6403310901555020335
 GameObject:
   m_ObjectHideFlags: 0
@@ -773,7 +945,7 @@ GameObject:
   - component: {fileID: 4866540759535232438}
   - component: {fileID: 6406632499300326616}
   - component: {fileID: 9164005130093346650}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -877,7 +1049,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 923337422418832712}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Lower Leg Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -909,7 +1081,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3489023731560138993}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Leg Effector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -924,7 +1096,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7208324997111496321}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.0000070161177, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.00022827456, w: 1}
   m_LocalPosition: {x: 0.193, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -942,7 +1114,7 @@ GameObject:
   - component: {fileID: 2411926274642903909}
   - component: {fileID: 9043409845856752960}
   - component: {fileID: 6521222471965358039}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Backpack Straps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1045,7 +1217,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9025164088145798950}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Leg Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1067,6 +1239,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5540167242461400722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7786736828756230338
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6978813796561695995}
+  m_Layer: 8
+  m_Name: Head Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6978813796561695995
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7786736828756230338}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.966, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5540167242461400722}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7997179252404642450
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,7 +1281,7 @@ GameObject:
   - component: {fileID: 3069051222299330801}
   - component: {fileID: 5613963422330786208}
   - component: {fileID: 268183929682063770}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Boot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1183,7 +1386,7 @@ GameObject:
   m_Component:
   - component: {fileID: 387528088541760186}
   - component: {fileID: 3358608337725681711}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Leg Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1248,7 +1451,7 @@ GameObject:
   - component: {fileID: 6581948040005490667}
   - component: {fileID: 7999310399196850525}
   - component: {fileID: 7868703012303755697}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1354,7 +1557,7 @@ GameObject:
   - component: {fileID: 7993856994010465296}
   - component: {fileID: 280386242433796428}
   - component: {fileID: 6721324574114515498}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Boot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1458,7 +1661,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4210311593444247790}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1491,7 +1694,7 @@ GameObject:
   - component: {fileID: 3128438976561344634}
   - component: {fileID: 5001634162580702244}
   - component: {fileID: 2131087975177578960}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1586,6 +1789,90 @@ MonoBehaviour:
     m_Extent: {x: 0.257325, y: 0.52231, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
+--- !u!1 &8985823627618034429
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4037624208035719130}
+  - component: {fileID: 7846322721088802906}
+  m_Layer: 0
+  m_Name: Left Ice Pickaxe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4037624208035719130
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8985823627618034429}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: -0.08270893, w: 0.9965737}
+  m_LocalPosition: {x: 0.066, y: 0.077, z: 0}
+  m_LocalScale: {x: 0.72685045, y: 0.7268505, z: 0.7268504}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1797581045211575960}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 3.297}
+--- !u!212 &7846322721088802906
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8985823627618034429}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 2
+  m_Sprite: {fileID: 21300000, guid: acc4b30333e94124bb99037851064a7c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.33, y: 0.67}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &8999018817133239496
 GameObject:
   m_ObjectHideFlags: 0
@@ -1595,7 +1882,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8674990459017483070}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Torrso Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1628,7 +1915,7 @@ GameObject:
   - component: {fileID: 4161468115213361586}
   - component: {fileID: 8170688165759907508}
   - component: {fileID: 571871174024521011}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Backpack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1732,7 +2019,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3069655022926753143}
   - component: {fileID: 3272919345225044912}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Arm Solver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1795,7 +2082,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5113026840304835364}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Chartacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}

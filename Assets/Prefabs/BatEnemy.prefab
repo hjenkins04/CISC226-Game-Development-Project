@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 118617910096024306}
   - component: {fileID: 7872813101587497610}
   m_Layer: 0
-  m_Name: FlyingEnemyPrefab
+  m_Name: BatEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

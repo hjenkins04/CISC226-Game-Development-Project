@@ -14,7 +14,6 @@ public class TextVisibilty : MonoBehaviour
     public TextMeshProUGUI displayText;
 
     public static bool interactable;
-    public static bool interactable2;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +41,10 @@ public class TextVisibilty : MonoBehaviour
             else
             {  // Hide the text
                 displayText.text = "";
+                if (distanceToPlayer > 20f){
+                    interactable = false;
+                }
+                
             }
         }
         

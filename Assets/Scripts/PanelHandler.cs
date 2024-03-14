@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PanelHandler : MonoBehaviour
 {
+    public Canvas canvas;
     public GameObject panel;
     private bool isPanelVisible = false;
 
@@ -32,6 +33,7 @@ public class PanelHandler : MonoBehaviour
         // Show the panel
         panel.SetActive(true);
         isPanelVisible = true;
+        canvas.sortingOrder = 1;
     }
 
     void HidePanel()
@@ -39,5 +41,6 @@ public class PanelHandler : MonoBehaviour
         // Hide the panel
         panel.SetActive(false);
         isPanelVisible = false;
+        canvas.sortingOrder = 0;
     }
 }

@@ -9,7 +9,7 @@ public class FlyingEnemy : MonoBehaviour
     [SerializeField] public float moveSpeed = 3f;
     [SerializeField] public float detectionRange = 1f;
     [SerializeField] public float attackRange = 1f;
-    private bool isPatrolling = true;
+    public bool isPatrolling = true;
 
     private Transform player;
     public Transform playerHead;
@@ -17,13 +17,20 @@ public class FlyingEnemy : MonoBehaviour
     private AIPath aiPath;
 
     [SerializeField] private Animator _anim;
-    private bool attacking = false;
+    public bool attacking = false;
     private bool following = false;
     [SerializeField] public float attackDelay;
+    
+    [SerializeField] public GameObject enemyMovementColliderPrefab;
+    private GameObject leftCollider;
+    private GameObject rightCollider;
+    private float horizontalOffset = 5f;
+    private float verticalOffset = 5f;
 
     // Start is called before the first frame update
     void Start()
     {
+        CreateMovementColliders();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         aiPath = GetComponent<AIPath>();
         aiPath.enabled = false;
@@ -86,21 +93,26 @@ public class FlyingEnemy : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("EnemyMovementCollider") && isPatrolling) {
-            Vector3 newRotation = transform.eulerAngles;
-            newRotation.y += 180f;
-            transform.eulerAngles = newRotation;
-        }
-        if (other.CompareTag("Player") && attacking) {
-            Debug.Log("player hit!");
-        }
-    }
-
     void Flip()
     {
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    void CreateMovementColliders() {
+        GameObject colliderParent = GameObject.Find("MovementColliders");
+
+        Vector3 leftPosition = transform.position - transform.right * horizontalOffset + Vector3.up * verticalOffset;
+        Vector3 rightPosition = transform.position + transform.right * horizontalOffset + Vector3.up * verticalOffset;
+
+        leftCollider = Instantiate(enemyMovementColliderPrefab, leftPosition, Quaternion.identity, colliderParent.transform);
+        rightCollider = Instantiate(enemyMovementColliderPrefab, rightPosition, Quaternion.identity, colliderParent.transform);
+    }
+
+    public void RotateEnemy() {
+        Vector3 newRotation = transform.eulerAngles;
+        newRotation.y += 180f;
+        transform.eulerAngles = newRotation;
     }
 }

@@ -17,6 +17,7 @@ public class Weapon : MonoBehaviour
     void Start()
     {
         tr.emitting = false;
+        weaponBody.SetActive(false); 
     }
 
     // Update is called once per frame
@@ -64,7 +65,8 @@ public class Weapon : MonoBehaviour
             // Start rotating
             isRotating = true;
 
-            tr.emitting = true;
+            //tr.emitting = true;
+            weaponBody.SetActive(true);
         }
 
         /*
@@ -102,6 +104,10 @@ public class Weapon : MonoBehaviour
     {
         if (isRotating)
         {
+            if(tr.emitting == false)
+            {
+                tr.emitting = true;
+            }
             // Calculate the rotation angle based on speed and time
             float rotationAmount = rotationSpeed * Time.deltaTime;
 
@@ -122,6 +128,7 @@ public class Weapon : MonoBehaviour
                 // Stop rotating when the desired angle is reached
                 isRotating = false;
                 tr.emitting = false;
+                weaponBody.SetActive(false);
             }
         }
     }

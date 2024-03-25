@@ -13,7 +13,7 @@ public class TextVisibilty : MonoBehaviour
     public float proximityDistance = 3f;
     public TextMeshProUGUI displayText;
 
-    public static bool interactable;
+    public bool interactable;
     // Start is called before the first frame update
     void Start()
     {

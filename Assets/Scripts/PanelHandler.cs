@@ -4,35 +4,27 @@ using UnityEngine;
 
 public class PanelHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-
-    
- public GameObject panel;
+    public Canvas canvas;
+    public GameObject panel;
     private bool isPanelVisible = false;
 
-   
+    // Reference to an instance of TextVisibility
+    public TextVisibilty textVisibiltyScript;
 
     void Update()
     {
-        // Check if the designated key is pressed
-        // if (Input.GetKeyDown(KeyCode.Space))
-        // {
-        //     // Toggle the visibility of the panel
-        //     if (isPanelVisible)
-        //     {
-        //         HidePanel();
-        //     }
-        //     else
-        //     {
-        //         ShowPanel();
-        //     }
-        // }
-
-        if (TextVisibilty.interactable == false){
-            HidePanel();
-        }
-        else{
-            ShowPanel();
+        // Check if the textVisibilityScript reference is not null
+        if (textVisibiltyScript != null)
+        {
+            // Access the interactable property directly
+            if (!textVisibiltyScript.interactable)
+            {
+                HidePanel();
+            }
+            else
+            {
+                ShowPanel();
+            }
         }
     }
 
@@ -41,6 +33,7 @@ public class PanelHandler : MonoBehaviour
         // Show the panel
         panel.SetActive(true);
         isPanelVisible = true;
+        canvas.sortingOrder = 1;
     }
 
     void HidePanel()
@@ -48,5 +41,6 @@ public class PanelHandler : MonoBehaviour
         // Hide the panel
         panel.SetActive(false);
         isPanelVisible = false;
+        canvas.sortingOrder = 0;
     }
 }

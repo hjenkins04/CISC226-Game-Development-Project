@@ -41,6 +41,7 @@ namespace FrostFalls
             _player.WallSlid += OnWallSlide;
             _player.WallClimbed += OnWallClimb;
             _player.WallJumped += OnWallJump;
+            _player.LedgeClimb += OnLedgeClimb;
             _moveParticles.Play();
         }
 
@@ -53,6 +54,7 @@ namespace FrostFalls
             _player.FreeFall -= OnWallSlide;
             _player.WallClimbed -= OnWallClimb;
             _player.WallJumped -= OnWallJump;
+            _player.LedgeClimb -= OnLedgeClimb;
             _moveParticles.Stop();
         }
 
@@ -137,6 +139,11 @@ namespace FrostFalls
             SpriteFlip();
         }
 
+        private void OnLedgeClimb()
+        {
+            _anim.SetTrigger(LedgeClimbKey);
+        }
+
         private void OnGroundedChanged(bool grounded, float impact)
         {
             _grounded = grounded;
@@ -161,5 +168,6 @@ namespace FrostFalls
         private static readonly int FreeFallKey = Animator.StringToHash("FreeFall");
         private static readonly int WallSlideKey = Animator.StringToHash("WallSlide");
         private static readonly int WallClimbKey = Animator.StringToHash("WallClimb");
+        private static readonly int LedgeClimbKey = Animator.StringToHash("LedgeClimb");
     }
 }

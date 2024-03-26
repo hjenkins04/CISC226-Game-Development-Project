@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
+using System.Net.Sockets;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.UIElements.Experimental;
 using static UnityEditor.Experimental.GraphView.GraphView;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
@@ -130,6 +132,24 @@ namespace FrostFalls
         [Tooltip("Wall jump cooldown duration")]
         public float WallJumpCoolDown = 1.0f;
 
+        [Tooltip("Set this to the layers considered non-ledge surfaces")]
+        public LayerMask LedgeLayers;
+
+        [Tooltip("The allowed disance between the player and a ledge"), Range(0f, 2f)]
+        public float LedgeCheckDistance;
+
+        [Tooltip("The allowed height offset between the player and a ledge"), Range(0f, 2f)]
+        public float LedgeCheckOffset;
+
+        [Tooltip("The players ledge climb start position")]
+        public Vector2 LedgeClimbStart;
+
+        [Tooltip("he players ledge climb end position")]
+        public Vector2 LedgeClimbOffsetEnd;
+
+        [Tooltip("The player ledge climb animation duration")]
+        public float LedgeClimbDuration;
+
         #endregion
 
         #endregion
@@ -172,6 +192,7 @@ namespace FrostFalls
         public event Action WallSlid;
         public event Action WallClimbed;
         public event Action WallJumped;
+        public event Action LedgeClimb;
 
         // Pickaxe
         public bool _hasPickaxe = true;
@@ -183,6 +204,9 @@ namespace FrostFalls
         private float originalGravityScale;
         private Coroutine resetGravityCoroutine;
         private Animator _animator;
+
+
+        private bool _ignorePlayerInput = false;
 
         private void Awake()
         {
@@ -209,11 +233,21 @@ namespace FrostFalls
         {
             // Update time and gather player input for each frame
             _time += Time.deltaTime;
-            GatherInput();
+            if (_ignorePlayerInput != true) //Gather player input aslong it's expected
+            {
+                GatherInput();
+            }
+
             _animator.SetBool("OnGround", _grounded);
             _animator.SetBool("Walled", _walled);
             _animator.SetBool("HasPickaxe", _hasPickaxe);
+            _animator.SetBool("LedgeClimbing", _isLedgeClimbing);
             currentPos = transform.position;
+
+            if (_isLedgeClimbing)
+            {
+                transform.position = _ledgeClimbStartPos;
+            }
         }
 
         /// <summary>
@@ -297,15 +331,19 @@ namespace FrostFalls
             // Perform physics and movement calculations at a fixed intervals
             CheckCollisions();
             WallCheck();
-            HandleJump();
-            HandleGrapple();
-            HandleBoost();
-            HandleDash();
-            HandleDirection();
-            HandleGravity();
-            ApplyMovement();
-            HandleToolSwap();
-            HandleWallClimb();
+            LedgeCheck();
+            if (!_isLedgeClimbing || !_ignorePlayerInput)
+            {
+                HandleJump();
+                HandleGrapple();
+                HandleBoost();
+                HandleDash();
+                HandleDirection();
+                HandleGravity();
+                ApplyMovement();
+                HandleToolSwap();
+                HandleWallClimb();
+            }
 
             // _rb.velocity = new Vector2(_frameVelocity.x, _frameVelocity.y);
 
@@ -363,6 +401,9 @@ namespace FrostFalls
             // Perform raycast downwards to check for ground
             RaycastHit2D groundHit = Physics2D.Raycast(rayStart, Vector2.down, rayLength, ~PlayerLayer);
 
+            // Visualize Ground Check Raycast
+            Debug.DrawRay(rayStart, Vector2.down * rayLength, Color.blue, 0.1f);
+
             // Check the raycast result to update grounded
             if (!groundHit.collider)
             {
@@ -371,8 +412,8 @@ namespace FrostFalls
                     _grounded = false;
                     _frameLeftGrounded = Time.time;
                     GroundedChanged?.Invoke(false, 0); // Invoke event when becoming ungrounded
-                                                       // Check if not grappling and not jumping to determine if in free fall
-                    if (!_isWallClimbing && !_isWallSliding && !_isGrappling && !_grounded)
+                    // Check if not grappling and not jumping to determine if in free fall
+                    if (!_isLedgeClimbing && !_isWallClimbing && !_isWallSliding && !_isGrappling && !_grounded)
                     {
                         FreeFall?.Invoke(); // Invoke free fall event or method
                     }
@@ -394,13 +435,16 @@ namespace FrostFalls
             //_walled =  Physics2D.OverlapCircle(wallCheck.position, 0.2f, ClimbableLayers);
 
             // Starting point of the raycast at the bottom of the player collider
-            Vector2 rayStart = new Vector2(_col.bounds.min.x, _col.bounds.max.y);
+            Vector2 rayStart = new Vector2(_col.bounds.center.x, _col.bounds.max.y);
             float rayLength = WalledDistance; // Distance to cast the ray forwards
 
             // Determine which way the player is facing
             Vector2 direction = playerParentSprite.localScale.x < 1 ? Vector2.left : Vector2.right;
 
             RaycastHit2D wallHit = Physics2D.Raycast(rayStart, direction, rayLength, ClimbableLayers);
+
+            // Visualize Wall Check Raycast
+            Debug.DrawRay(rayStart, direction * rayLength, Color.red, 0.1f);
 
 
             // Check the raycast result to update grounded
@@ -412,8 +456,30 @@ namespace FrostFalls
             {
                 _walled = false;
             }
+        }
+       
 
-            Debug.DrawRay(rayStart, direction * rayLength, _walled ? Color.green : Color.red);
+        private void LedgeCheck()
+        {
+            // Adjust the starting point and direction of the raycast to match your character's orientation and position
+            Vector2 rayStart = new Vector2(_col.bounds.center.x, _col.bounds.max.y + LedgeCheckOffset);
+            Vector2 direction = playerParentSprite.localScale.x < 1 ? Vector2.left : Vector2.right;
+            float rayLength = LedgeCheckDistance; // Define LedgeCheckDistance based on your game scale
+
+            Debug.DrawRay(rayStart, direction * rayLength, Color.yellow, 0.1f);
+
+            RaycastHit2D ledgeHit = Physics2D.Raycast(rayStart, direction, rayLength, LedgeLayers);
+
+            if (ledgeHit.collider)
+            {
+                _canLedgeClimb = false;
+                Debug.Log("Hit: " + ledgeHit.collider.gameObject.name + " on layer " + LayerMask.LayerToName(ledgeHit.collider.gameObject.layer));
+            }
+            else
+            {
+                _canLedgeClimb = true;
+            }
+
         }
         #endregion
 
@@ -569,9 +635,12 @@ namespace FrostFalls
         #region WallClimb
         private bool _wallClimbToConsume; // Indicates a wall climb input that needs to be processed
         private bool _stopWallClimbToConsume; // Indicates a wall climb release input that needs to be processed
-        private bool _isWallClimbing = false; // WallClimb is currently active
-        private bool _isWallSliding = false; // WallSlide is currently active
+        public bool _isWallClimbing = false; // WallClimb is currently active
+        public bool _isWallSliding = false; // WallSlide is currently active
+        public bool _isLedgeClimbing = false; // LedgeClimb is currently active
+        public bool _canLedgeClimb = false; // If the player can ledge climb
         private float _lastWallJumpTime = -Mathf.Infinity;
+        public Vector2 _ledgeClimbStartPos;
 
         /// <summary>
         /// </summary>
@@ -580,10 +649,12 @@ namespace FrostFalls
             // Prevent Loop
             if (_wallClimbToConsume && _isWallClimbing) _wallClimbToConsume = false;
 
-            if (_walled && !_isWallClimbing && (!_wallClimbToConsume || !_stopWallClimbToConsume) && _hasPickaxe && !_grounded) WallSlide();
-            if (_walled && !_isWallClimbing && _isWallSliding && _hasPickaxe && !_grounded) WallSlide();
+            if ((_walled && _isWallClimbing && !_isWallSliding && _canLedgeClimb) || _isLedgeClimbing) StartLedgeClimb();
 
-            if (_walled && _wallClimbToConsume && _hasPickaxe) StartWallClimb();
+            if (_walled && !_isWallClimbing && (!_wallClimbToConsume || !_stopWallClimbToConsume) && _hasPickaxe && !_grounded && !_isLedgeClimbing) WallSlide();
+            if (_walled && !_isWallClimbing && _isWallSliding && _hasPickaxe && !_grounded && !_isLedgeClimbing) WallSlide();
+
+            if (_walled && _wallClimbToConsume && _hasPickaxe && !_isLedgeClimbing) StartWallClimb();
 
             if ((_walled && _stopWallClimbToConsume) || !_hasPickaxe) StopWallClimb();
 
@@ -595,10 +666,11 @@ namespace FrostFalls
         /// </summary>
         private void StartWallClimb()
         {
-            _isWallClimbing = true;
-            _isWallSliding = false;
-            _frameVelocity.y = WallClimbSpeed;
-            WallClimbed?.Invoke();
+                _isWallClimbing = true;
+                _isWallSliding = false;
+                _frameVelocity.y = WallClimbSpeed;
+                WallClimbed?.Invoke();
+
         }
 
         /// <summary>
@@ -644,6 +716,59 @@ namespace FrostFalls
             if (_hasPickaxe) WallSlide();
         }
 
+        private void StartLedgeClimb()
+        {
+            if (_isLedgeClimbing) return;
+
+            _ledgeClimbStartPos = transform.position;
+            currentPos = transform.position;
+
+
+            _isLedgeClimbing = true;
+            _isWallClimbing = false;
+            _isWallSliding = false;
+            _ignorePlayerInput = true;
+            LedgeClimb?.Invoke(); // Invoke Ledge Climb
+
+            _frameVelocity.y = 0;
+            _frameVelocity.x = 0;
+
+            StartCoroutine(WaitForAnimation(LedgeClimbDuration));
+        }
+
+        private IEnumerator WaitForAnimation(float duration)
+        {
+            // Wait for the animation to finish
+            yield return new WaitForSeconds(duration);
+            transform.position = _ledgeClimbStartPos;
+            UpdatePlayerPositionPostClimb();
+        }
+
+        private void UpdatePlayerPositionPostClimb()
+        {
+
+            _isLedgeClimbing = false;
+            _isWallClimbing = false;
+            _isWallSliding = false;
+            transform.position = _ledgeClimbStartPos;
+
+            // Calculate the difference between the end and start positions
+            Vector2 positionDifference = LedgeClimbOffsetEnd - LedgeClimbStart;
+
+            // Determine the direction the player is facing
+            positionDifference.x *= playerParentSprite.localScale.x < 0 ? -1f : 1f;
+
+            // Calculate the new player position by adding the position difference to the current position
+            Vector2 newPos = _ledgeClimbStartPos + positionDifference;
+
+            // Apply the new position to the player's transform
+            transform.position = newPos;
+
+            _ignorePlayerInput = false;
+            _isWallClimbing = false;
+            _isWallSliding = false;
+
+        }
         #endregion
 
         #region Boost
@@ -786,7 +911,7 @@ namespace FrostFalls
         /// </summary>
         private void HandleGravity()
         {
-            if (_isWallSliding || _isWallClimbing)
+            if (_isWallSliding || _isWallClimbing || _ignorePlayerInput)
             {
                 return;
             }
@@ -874,6 +999,7 @@ namespace FrostFalls
         event Action WallSlid; // Event triggered when the player wall slides
         event Action WallClimbed; // Event triggered when the player wall climbs
         event Action WallJumped; // Event triggered when the player wall jumps
+        event Action LedgeClimb; // Event triggered when the player ledge climbs
         Vector2 FrameInput { get; } // Current frame's input vector
     }
 

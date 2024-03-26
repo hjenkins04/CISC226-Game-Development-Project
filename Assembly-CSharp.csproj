@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\RangedEnemy.cs" />
     <Compile Include="Assets\Scripts\TextVisibilty.cs" />
     <Compile Include="Assets\Scripts\BatTriggerCollision.cs" />
+    <Compile Include="Assets\Scripts\weaponDamage.cs" />
     <Compile Include="Assets\Scripts\EnemyStats.cs" />
     <Compile Include="Assets\Scripts\BatSolidCollision.cs" />
     <Compile Include="Assets\Scripts\FlyingEnemy.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\Pause.cs" />
     <Compile Include="Assets\Scripts\PanelHandler.cs" />
+    <Compile Include="Assets\Scripts\ButtonFader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

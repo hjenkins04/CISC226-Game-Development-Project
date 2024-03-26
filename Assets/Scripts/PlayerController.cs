@@ -107,6 +107,27 @@ namespace FrostFalls
 
         [Tooltip("Position from where the grapple is shot, typically the player's hand or a grappling device")]
         public UnityEngine.Transform direction;
+
+        [Tooltip("Grapple boost force")]
+        public float BoostForce;
+
+        [Tooltip("Grapple boost particle effect")]
+        public ParticleSystem BoostEffect;
+
+        [Tooltip("Grapple boost max speed")]
+        public float MaxGrappleBoostSpeed;
+
+        [Tooltip("Grapple pull force")]
+        public float PullForce;
+
+        [Tooltip("Grapple dash particle effect")]
+        public ParticleSystem DashEffect;
+
+        [Tooltip("Grapple dash cooldown")]
+        public float DashCooldown;
+
+        [Tooltip("Grapple dash force")]
+        public float DashForce;
         #endregion
 
         #region WallClimb
@@ -158,30 +179,11 @@ namespace FrostFalls
         private CapsuleCollider2D _col; // Collider component used for collision detection
         private FrameInput _frameInput; // Stores current frame's input data
         private Vector2 _frameVelocity; // Calculated velocity to apply to the Rigidbody
-        private bool _cachedQueryStartInColliders;
 
-        // Grappling Mechanic Fields and Properties
-        private LineRenderer _lineRenderer; // Component used to render the grappling rope
-        private DistanceJoint2D _joint; // Restricts the player's movement to within a certain distance from the grapple point
-        private Vector2 _grapplePoint; // Game world grappling hook attach point
-
-        // player position 
+        // Player position & respawn
         public Vector2 RespawnPosition;
         public Vector2 currentPos;
 
-        // Boost Mechanic
-        private bool _allowedBoost;
-        private int _yRelative;
-        public float boostForce; //Move to Settings Store
-        public ParticleSystem boostEffect;
-        public float maxSpeed;
-        public float pullForce;
-
-        // Aerial Dash Mechanic
-        public ParticleSystem dashEffect;
-        public float dashCooldown;
-        public float dashForce;
-        private float _currentDashWaitTime;
 
         // Exposed properties and events through IPlayerController interface
         public Vector2 FrameInput => _frameInput.Move;
@@ -193,9 +195,6 @@ namespace FrostFalls
         public event Action WallClimbed;
         public event Action WallJumped;
         public event Action LedgeClimb;
-
-        // Pickaxe
-        public bool _hasPickaxe = true;
 
         // Elapsed time
         private float _time;
@@ -213,8 +212,6 @@ namespace FrostFalls
             // Initialize components and create inital cache
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<CapsuleCollider2D>();
-            Debug.Log(_col);
-            _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
             _lineRenderer = GetComponent<LineRenderer>() ?? gameObject.AddComponent<LineRenderer>();
             originalGravityScale = _rb.gravityScale;
             _animator = GetComponentInChildren<Animator>();
@@ -241,7 +238,10 @@ namespace FrostFalls
             _animator.SetBool("OnGround", _grounded);
             _animator.SetBool("Walled", _walled);
             _animator.SetBool("HasPickaxe", _hasPickaxe);
-            _animator.SetBool("LedgeClimbing", _isLedgeClimbing);
+            _animator.SetBool("IsLedgeClimbing", _isLedgeClimbing);
+            _animator.SetBool("IsGrappling", _isGrappling);
+            _animator.SetBool("IsWallClimbing", _isWallClimbing);
+            _animator.SetBool("IsWallSliding", _isWallSliding);
             currentPos = transform.position;
 
             if (_isLedgeClimbing)
@@ -385,8 +385,8 @@ namespace FrostFalls
         #region Collisions
 
         private float _frameLeftGrounded = float.MinValue; // Tracks the time when the player last left the ground
-        public bool _grounded; // Indicates whether the player is currently grounded
-        public bool _walled; // Indicates whether the player is currently against a climbable wall
+        private bool _grounded; // Indicates whether the player is currently grounded
+        private bool _walled; // Indicates whether the player is currently against a climbable wall
 
         /// <summary>
         /// Check for collisions with the ground and ceiling using capsule casts
@@ -432,8 +432,6 @@ namespace FrostFalls
         /// </summary>
         private void WallCheck()
         {
-            //_walled =  Physics2D.OverlapCircle(wallCheck.position, 0.2f, ClimbableLayers);
-
             // Starting point of the raycast at the bottom of the player collider
             Vector2 rayStart = new Vector2(_col.bounds.center.x, _col.bounds.max.y);
             float rayLength = WalledDistance; // Distance to cast the ray forwards
@@ -445,7 +443,6 @@ namespace FrostFalls
 
             // Visualize Wall Check Raycast
             Debug.DrawRay(rayStart, direction * rayLength, Color.red, 0.1f);
-
 
             // Check the raycast result to update grounded
             if (wallHit.collider)
@@ -461,24 +458,20 @@ namespace FrostFalls
 
         private void LedgeCheck()
         {
-            // Adjust the starting point and direction of the raycast to match your character's orientation and position
-            Vector2 rayStart = new Vector2(_col.bounds.center.x, _col.bounds.max.y + LedgeCheckOffset);
+
             Vector2 direction = playerParentSprite.localScale.x < 1 ? Vector2.left : Vector2.right;
+
+
+            Vector2 rayStartOffset = direction * _col.bounds.extents.x; // Move start point to the edge of the collider in the facing direction
+            Vector2 rayStart = new Vector2(_col.bounds.center.x - rayStartOffset.x, _col.bounds.max.y + LedgeCheckOffset); // Move the start to the opposite side (player's back)
+
             float rayLength = LedgeCheckDistance; // Define LedgeCheckDistance based on your game scale
 
             Debug.DrawRay(rayStart, direction * rayLength, Color.yellow, 0.1f);
 
-            RaycastHit2D ledgeHit = Physics2D.Raycast(rayStart, direction, rayLength, LedgeLayers);
+            RaycastHit2D ledgeHit = Physics2D.Raycast(rayStart, direction, rayLength, ~PlayerLayer);
 
-            if (ledgeHit.collider)
-            {
-                _canLedgeClimb = false;
-                Debug.Log("Hit: " + ledgeHit.collider.gameObject.name + " on layer " + LayerMask.LayerToName(ledgeHit.collider.gameObject.layer));
-            }
-            else
-            {
-                _canLedgeClimb = true;
-            }
+            _canLedgeClimb = !ledgeHit.collider;
 
         }
         #endregion
@@ -532,6 +525,12 @@ namespace FrostFalls
         private bool _stopGrappleToConsume; // Indicates a grapple release input that needs to be processed
         private bool _grappleUsable = true; // Allows grappling
         private bool _isGrappling = false; // Grapple is currently active
+        private LineRenderer _lineRenderer; // Component used to render the grappling rope
+        private DistanceJoint2D _joint; // Restricts the player's movement to within a certain distance from the grapple point
+        private Vector2 _grapplePoint; // Game world grappling hook attach point
+        private bool _allowedBoost;
+        private int _yRelative;
+        private float _currentDashWaitTime;
 
         /// <summary>
         /// Determines if the player can grapple, and grapples if conditions are met
@@ -635,12 +634,12 @@ namespace FrostFalls
         #region WallClimb
         private bool _wallClimbToConsume; // Indicates a wall climb input that needs to be processed
         private bool _stopWallClimbToConsume; // Indicates a wall climb release input that needs to be processed
-        public bool _isWallClimbing = false; // WallClimb is currently active
-        public bool _isWallSliding = false; // WallSlide is currently active
-        public bool _isLedgeClimbing = false; // LedgeClimb is currently active
-        public bool _canLedgeClimb = false; // If the player can ledge climb
+        private bool _isWallClimbing = false; // WallClimb is currently active
+        private bool _isWallSliding = false; // WallSlide is currently active
+        private bool _isLedgeClimbing = false; // LedgeClimb is currently active
+        private bool _canLedgeClimb = false; // If the player can ledge climb
         private float _lastWallJumpTime = -Mathf.Infinity;
-        public Vector2 _ledgeClimbStartPos;
+        private Vector2 _ledgeClimbStartPos;
 
         /// <summary>
         /// </summary>
@@ -795,7 +794,7 @@ namespace FrostFalls
         /// </summary>
         private void ApplyBoostForce()
         {
-            boostEffect.Play();
+            BoostEffect.Play();
             _boostActive = true; // Indicate that boost is active
 
             // Calculate the normalized direction vector from the player to the grapple point
@@ -824,16 +823,16 @@ namespace FrostFalls
             }
 
             // Apply the boost force in the determined direction
-            _frameVelocity = boostDirection * boostForce + new Vector2(0, _rb.velocity.y);
+            _frameVelocity = boostDirection * BoostForce + new Vector2(0, _rb.velocity.y);
 
             // Correctly orient the boost effect based on the action
             float effectAngle = Mathf.Atan2(boostDirection.y, boostDirection.x) * Mathf.Rad2Deg;
-            boostEffect.transform.rotation = Quaternion.Euler(0, 0, effectAngle + angleOffset);
+            BoostEffect.transform.rotation = Quaternion.Euler(0, 0, effectAngle + angleOffset);
 
             // Handle boost deactivation
             if (_stopBoostToConsume || _stopGrappleToConsume)
             {
-                boostEffect.Stop();
+                BoostEffect.Stop();
                 _boostActive = false;
                 _stopBoostToConsume = false;
                 _stopGrappleToConsume = false;
@@ -845,7 +844,7 @@ namespace FrostFalls
         /// </summary>
         private void StopBoost()
         {
-            boostEffect.Stop();
+            BoostEffect.Stop();
             _boostActive = false; // Indicate that boost is no longer active
         }
         #endregion
@@ -859,7 +858,7 @@ namespace FrostFalls
         {
             if (!_dashToConsume) return;
 
-            if (_isGrappling && _dashToConsume && ((_time - _currentDashWaitTime) >= dashCooldown)) ApplyDashForce();
+            if (_isGrappling && _dashToConsume && ((_time - _currentDashWaitTime) >= DashCooldown)) ApplyDashForce();
 
             _dashToConsume = false;
         }
@@ -869,9 +868,10 @@ namespace FrostFalls
         /// </summary>
         private void ApplyDashForce()
         {
-            dashEffect.transform.rotation = direction.rotation;
-            _rb.AddForce(direction.up * dashForce, ForceMode2D.Impulse);
-            dashEffect.Play();
+            Debug.Log("DASH");
+            DashEffect.transform.rotation = direction.rotation;
+            _rb.AddForce(direction.up * DashForce, ForceMode2D.Impulse);
+            DashEffect.Play();
             _currentDashWaitTime = _time;
         }
         #endregion
@@ -931,6 +931,7 @@ namespace FrostFalls
 
         #region ToolSwap
         private bool _toolSwapToConsume; // Indicates a tool swap input that needs to be processed
+        private bool _hasPickaxe = true; // Whether the player is equipped with a pickaxe
         private void HandleToolSwap()
         {
             if (!_toolSwapToConsume) return;

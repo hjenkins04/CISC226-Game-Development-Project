@@ -26,7 +26,6 @@ public class Projectile : MonoBehaviour
     {
         if (IsInLayerMask(other.gameObject.layer, playerLayer))
         {
-            Debug.Log("HIT PLAYER");
             // TODO handle player impact
             _anim.SetTrigger(ProjectileImpact);
             StartCoroutine(DestroyAfterAnimation());
@@ -35,10 +34,9 @@ public class Projectile : MonoBehaviour
         // Check if the collided object belongs to one of the ImpactLayers
         else if (IsInLayerMask(other.gameObject.layer, impactLayers))
         {
-            Debug.Log("HIT OTHER");
             _anim.SetTrigger(ProjectileImpact);
             StartCoroutine(DestroyAfterAnimation());
-
+            StartCoroutine(DestroyAfterAnimation());
         }
     }
 

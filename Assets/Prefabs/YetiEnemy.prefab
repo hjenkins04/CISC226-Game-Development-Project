@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 175458906427650388}
   - component: {fileID: 7196181678350135406}
   - component: {fileID: 9077993445498329803}
+  - component: {fileID: 8772840541019261720}
   m_Layer: 0
   m_Name: YetiEnemy
   m_TagString: Enemy
@@ -274,3 +275,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8772840541019261720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4696408720733241384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe321861bc2e5b64c8e691258ca911f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  health: 3
+  coinDrop: 3
+  enemy: {fileID: 4696408720733241384}

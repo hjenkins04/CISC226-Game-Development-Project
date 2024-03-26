@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
     public GameObject weaponBody;
     public TrailRenderer tr;
 
-    public float rotationSpeed = 60f; // Adjust the speed as needed
+    public float rotationSpeed = 800f; // Adjust the speed as needed
     private bool isRotating = false;
 
     private bool isRight;
@@ -18,6 +18,7 @@ public class Weapon : MonoBehaviour
     {
         tr.emitting = false;
         weaponBody.SetActive(false); 
+
     }
 
     // Update is called once per frame

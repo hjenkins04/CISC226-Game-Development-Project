@@ -8,11 +8,12 @@ public class EnemyStats : MonoBehaviour
     public float maxHealth;
     public float health;
 
+    public float coinDrop;
     public GameObject enemy;
     // Start is called before the first frame update
     void Start()
     {
-        
+        health = maxHealth;
     }
 
     // Update is called once per frame
@@ -28,5 +29,6 @@ public class EnemyStats : MonoBehaviour
     {
         Destroy(enemy);
         //Drop coins
+        GameObject.Find("Player").GetComponent<PlayerStats>().coins += coinDrop;
     }
 }

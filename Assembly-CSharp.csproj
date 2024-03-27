@@ -73,6 +73,7 @@
     <Compile Include="Assets\Scripts\weaponDamage.cs" />
     <Compile Include="Assets\Scripts\EnemyStats.cs" />
     <Compile Include="Assets\Scripts\BatSolidCollision.cs" />
+    <Compile Include="Assets\Scripts\BuyHealth.cs" />
     <Compile Include="Assets\Scripts\FlyingEnemy.cs" />
     <Compile Include="Assets\Scripts\PlayerAnimator.cs" />
     <Compile Include="Assets\Scripts\ChestPos.cs" />

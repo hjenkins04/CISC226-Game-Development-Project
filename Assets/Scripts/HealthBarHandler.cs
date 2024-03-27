@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class HealthBarHandler : MonoBehaviour
 {
     // Start is called before the first frame update
-  public Slider healthSlider; // Reference to your slider
+    public Slider healthSlider; // Reference to your slider
     public GameObject playerObject; // Reference to the player object in the scene
 
     void Update()

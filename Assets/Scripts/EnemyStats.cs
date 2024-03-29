@@ -51,7 +51,7 @@ public class EnemyStats : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No RangedEnemy or FlyingEnemy component attached");
+            Debug.LogError("No RangedEnemy or FlyingEnemy component is attached to the object");
         };
         //Drop coins
         PlayerStats playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
@@ -61,7 +61,7 @@ public class EnemyStats : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("PlayerStats component not found");
+            Debug.LogWarning("PlayerStats component not found on Player object");
         }
     }
 }

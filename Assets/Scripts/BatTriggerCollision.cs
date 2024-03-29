@@ -6,8 +6,6 @@ public class BatTriggerCollision : MonoBehaviour
 {
     private FlyingEnemy parentEnemy;
 
-    //THIS IS UNUSED
-
     void Start()
     {
         parentEnemy = GetComponentInParent<FlyingEnemy>();
@@ -15,6 +13,7 @@ public class BatTriggerCollision : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player") && parentEnemy.attacking) {
+            Debug.Log("Player hit");
         }
         if (parentEnemy.isPatrolling && other.CompareTag("EnemyMovementCollider")) {
             parentEnemy.RotateEnemy();

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class RangedEnemy : MonoBehaviour
 {
@@ -37,48 +36,33 @@ public class RangedEnemy : MonoBehaviour
     [Tooltip("The player layer")]
     [SerializeField] public LayerMask playerLayer;
 
-    [Header("Death Properties00")]
-    [Tooltip("Death Animation Duration")]
-    [SerializeField] public float deathAnimationTime = 4f;
-
     private float _nextFireTime;
     private bool _throwing = false;
     private bool _foundPlayer = false;
-    private bool _dead = false;
-    private Rigidbody2D _rigidbody;
 
-
-    private void Awake()
-    {
-        _rigidbody = GetComponent<Rigidbody2D>();
-    }
 
     void Update()
     {
         _anim.SetBool("Throwing", _throwing);
         _anim.SetBool("Patroling",!_foundPlayer);
-        _anim.SetBool("Dead", _dead);
+        CheckForPlayer();
 
-        if (!_dead)
+        if (_foundPlayer)
         {
-            CheckForPlayer();
-            if (_foundPlayer)
-            {
-                FacePlayer();
+            FacePlayer();
 
-                if (Time.time >= _nextFireTime && !_throwing)
-                {
-                    _nextFireTime = Time.time + 1f / fireRate;
-                    _anim.SetTrigger(YetiThrow);
-                    StartCoroutine(FireProjectileAfterAnimation(throwDelay));
-                    _throwing = true;
-                }
-            }
-            else
+            if (Time.time >= _nextFireTime && !_throwing)
             {
-                Move();
-                CheckForEdgeOrObstacle();
+                _nextFireTime = Time.time + 1f / fireRate;
+                _anim.SetTrigger(YetiThrow);
+                StartCoroutine(FireProjectileAfterAnimation(throwDelay));
+                _throwing = true;
             }
+        }
+        else
+        {
+            Move();
+            CheckForEdgeOrObstacle();
         }
     }
 
@@ -98,22 +82,6 @@ public class RangedEnemy : MonoBehaviour
         {
             Flip();
         }
-    }
-    public void DeathSequence()
-    {
-        _dead = true;
-        _anim.SetTrigger("Die");
-        _rigidbody.isKinematic = true;
-        _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-
-        StartCoroutine(WaitAndDestroy(deathAnimationTime));
-    }
-
-    IEnumerator WaitAndDestroy(float delay)
-    {
-        // Wait for the defined duration
-        yield return new WaitForSeconds(delay);
-        Destroy(gameObject);
     }
 
     IEnumerator FireProjectileAfterAnimation(float delay)

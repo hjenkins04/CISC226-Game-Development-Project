@@ -67,9 +67,7 @@
     <Compile Include="Assets\Scripts\BatTriggerCollision.cs" />
     <Compile Include="Assets\Scripts\weaponDamage.cs" />
     <Compile Include="Assets\Scripts\EnemyStats.cs" />
-    <Compile Include="Assets\Scripts\BuyHealth.cs" />
     <Compile Include="Assets\Scripts\FlyingEnemy.cs" />
-    <Compile Include="Assets\Scripts\ImageVisibility.cs" />
     <Compile Include="Assets\textController.cs" />
     <Compile Include="Assets\UIController.cs" />
     <Compile Include="Assets\Scripts\AudioManager.cs" />
@@ -89,8 +87,6 @@
     <Compile Include="Assets\Scripts\ControlsMenu.cs" />
     <Compile Include="Assets\Scripts\Weapon.cs" />
     <Compile Include="Assets\Scripts\Sound.cs" />
-    <Compile Include="Assets\Scripts\Damage Flash.cs" />
-    <Compile Include="Assets\Scripts\HealthBarHandler.cs" />
     <Compile Include="Assets\Scripts\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\Test.cs" />
     <Compile Include="Assets\Scripts\SceneManagerScript.cs" />

@@ -26,6 +26,7 @@ public class BuyHealth : MonoBehaviour
                 playerStats.coins-=3.0f;
                 playerStats.health+=1.0f;
             }
+            
             // Increase player's health
 
             // Optionally, you can update UI elements to reflect changes

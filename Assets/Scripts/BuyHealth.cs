@@ -21,8 +21,12 @@ public class BuyHealth : MonoBehaviour
 
             if (playerStats != null)
         {
+
+            if (playerStats.coins >= 3.0f){
+                playerStats.coins-=3.0f;
+                playerStats.health+=1.0f;
+            }
             // Increase player's health
-            playerStats.health+=1.0f;
 
             // Optionally, you can update UI elements to reflect changes
         }

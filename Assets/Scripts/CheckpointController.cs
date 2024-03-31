@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class CheckpointController : MonoBehaviour
 {
@@ -19,14 +20,26 @@ public class CheckpointController : MonoBehaviour
     // Call this method with the index of the checkpoint the player reached
     public void UpdateLatestCheckpoint(int checkpointIndex)
     {
-        if (checkpointIndex >= 0 && checkpointIndex < checkpoints.Length && checkpointIndex > latestCheckpointIndex)
+        StartCoroutine(WaitBeforeUpdate(checkpointIndex));
+    }
+
+    IEnumerator WaitBeforeUpdate(int checkpointIndex)
+    {
+        // Wait for 0.5 seconds
+        yield return new WaitForSeconds(0.5f);
+
+        if (ButtonFader.toggle)
         {
-            latestCheckpointIndex = checkpointIndex;
-            Debug.Log("Checkpoint updated to: " + checkpointIndex);
-        }
-        else
-        {
-            Debug.LogError("Invalid checkpoint index");
+            if (checkpointIndex >= 0 && checkpointIndex < checkpoints.Length && checkpointIndex > latestCheckpointIndex)
+            {
+                latestCheckpointIndex = checkpointIndex;
+                Debug.Log("Checkpoint updated to: " + checkpointIndex);
+                ButtonFader.toggle = false;
+            }
+            else
+            {
+                Debug.LogError("Invalid checkpoint index");
+            }
         }
     }
 

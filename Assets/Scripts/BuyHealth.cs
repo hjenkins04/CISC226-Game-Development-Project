@@ -21,8 +21,15 @@ public class BuyHealth : MonoBehaviour
             {
                 if (playerStats.coins >= 1.0f)
                 {
-                    playerStats.coins -= 1.0f;
-                    playerStats.health += 1.0f;
+                    
+                    if (playerStats.health < playerStats.maxHealth){
+                        playerStats.health += 1.0f;
+                        playerStats.coins -= 1.0f;
+                    }
+                    else{
+                        ShowFloatingText("Full Health!");
+                    }
+                    
                 }
                 else
                 {
@@ -38,7 +45,7 @@ public class BuyHealth : MonoBehaviour
         buttonClicked = true;
     }
 
-    private void ShowFloatingText(string message)
+    public void ShowFloatingText(string message)
     {
    GameObject floatingTextObject = Instantiate(floatingTextPrefab, canvasTransform);
     TextMeshProUGUI floatingText = floatingTextObject.GetComponent<TextMeshProUGUI>();

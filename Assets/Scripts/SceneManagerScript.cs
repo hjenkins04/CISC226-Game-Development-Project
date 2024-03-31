@@ -10,7 +10,7 @@ public class SceneManagerScript : MonoBehaviour
         if (!ControlsMenu.controlVisible && !SettingsMenu.settingVisible ){
             SceneManager.LoadScene(sceneName);
             // uncomment below once certain nohting causing error
-            //Time.timeScale = 1f;
+            Time.timeScale = 1f;
         }
         
     }

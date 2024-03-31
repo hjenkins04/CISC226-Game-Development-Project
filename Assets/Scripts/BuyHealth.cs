@@ -19,9 +19,9 @@ public class BuyHealth : MonoBehaviour
             Debug.Log("Button is clicked!");
             if (playerStats != null)
             {
-                if (playerStats.coins >= 3.0f)
+                if (playerStats.coins >= 1.0f)
                 {
-                    playerStats.coins -= 3.0f;
+                    playerStats.coins -= 1.0f;
                     playerStats.health += 1.0f;
                 }
                 else

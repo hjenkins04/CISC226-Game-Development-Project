@@ -204,6 +204,8 @@ namespace FrostFalls
         private Coroutine resetGravityCoroutine;
         private Animator _animator;
 
+        public bool IsPlayerDead;
+
 
         private bool _ignorePlayerInput = false;
 
@@ -248,6 +250,13 @@ namespace FrostFalls
             {
                 transform.position = _ledgeClimbStartPos;
             }
+
+            if (IsPlayerDead)
+            {
+                _ignorePlayerInput = true;
+                //_rb.constraints = RigidbodyConstraints2D.FreezeAll;
+            }
+            if (!IsPlayerDead) _ignorePlayerInput = false;
         }
 
         /// <summary>

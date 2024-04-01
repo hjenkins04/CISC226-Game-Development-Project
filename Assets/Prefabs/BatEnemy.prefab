@@ -160,7 +160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c70e7528701647459e996399b39eb0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 3
 --- !u!1 &5864564380594162924
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,6 +178,7 @@ GameObject:
   - component: {fileID: 118617910096024306}
   - component: {fileID: 854791459094369995}
   - component: {fileID: 7297546644835236843}
+  - component: {fileID: 43264519909417772}
   m_Layer: 0
   m_Name: BatEnemy
   m_TagString: Enemy
@@ -223,7 +223,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c7a07d116466e814ea0f05ed3f39b359, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -304,6 +304,15 @@ MonoBehaviour:
   attacking: 0
   attackDelay: 0.5
   enemyMovementColliderPrefab: {fileID: 5654360201345585171, guid: 791cbecbab5c47146bb2d718eb2ce2b5, type: 3}
+  deathAnimationTime: 4
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2624
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  damage: 3
+  attackCooldown: 1.5
 --- !u!114 &7004327853930205084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,3 +469,59 @@ CircleCollider2D:
   m_Offset: {x: -0.06872368, y: 0.29932475}
   serializedVersion: 2
   m_Radius: 0.89398384
+--- !u!114 &43264519909417772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5864564380594162924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddd8f7a8ef0f600479ac2c1f5ddaebfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _FlashColor: {r: 4.2870936, g: 4.2870936, b: 4.2870936, a: 1}
+  _FlashTime: 0.25
+  _FlashSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.49899262
+      value: 0.50176054
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.837222
+      value: -0.7826361
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.1989413
+      value: 1.7832347
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.4949752
+      value: 0.5150543
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

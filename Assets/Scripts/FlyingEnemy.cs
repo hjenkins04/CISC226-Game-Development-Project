@@ -27,7 +27,22 @@ public class FlyingEnemy : MonoBehaviour
     private float horizontalOffset = 5f;
     private float verticalOffset = 5f;
 
-    // Start is called before the first frame update
+    [SerializeField] public float deathAnimationTime = 4f;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask playerLayer;
+
+    [SerializeField] public float damage = 3f;
+    [SerializeField] private float attackCooldown = 1.5f;
+    private float lastAttackTime = 0f;
+
+    private bool _dead = false;
+    private Rigidbody2D _rigidbody;
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody2D>();
+    }
+
     void Start()
     {
         CreateMovementColliders();
@@ -36,28 +51,52 @@ public class FlyingEnemy : MonoBehaviour
         aiPath.enabled = false;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        if (Vector2.Distance(transform.position, player.position) <= detectionRange && isPatrolling) {
-            isPatrolling = false;
-            following = true;
-            aiPath.enabled = true;
-            gameObject.GetComponent<AIDestinationSetter>().target = playerHead;
-        }
+        _anim.SetBool("Dead", _dead);
+        if (!_dead)
+        {
+            if (Vector2.Distance(transform.position, player.position) <= detectionRange && isPatrolling)
+            {
+                isPatrolling = false;
+                following = true;
+                aiPath.enabled = true;
+                gameObject.GetComponent<AIDestinationSetter>().target = playerHead;
+            }
+            if (isPatrolling)
+            {
+                transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+            }
+            else
+            {
+                FacePlayer();
+                if (Vector2.Distance(transform.position, playerHead.position) <= attackRange && !attacking)
+                {
+                    attacking = true;
+                    _anim.SetTrigger("BatAttack");
+                    StartCoroutine(WaitForAttackAnimation(attackDelay));
 
-        if (isPatrolling) {
-            transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-        } else {
-            FacePlayer();
-            if (Vector2.Distance(transform.position, playerHead.position) <= attackRange && !attacking) {
-                attacking = true;
-                _anim.SetTrigger("BatAttack");
-                StartCoroutine(WaitForAttackAnimation(attackDelay));
-
-                StartCoroutine(WaitForBatDivePosition(batDivePosition));
+                    StartCoroutine(WaitForBatDivePosition(batDivePosition));
+                }
             }
         }
+    }
+    public void DeathSequence()
+    {
+        _dead = true;
+        aiPath.enabled = false;
+        _anim.SetTrigger("Die");
+        _rigidbody.isKinematic = false;
+        _rigidbody.AddForce(new Vector2(0, -30), ForceMode2D.Impulse);
+
+        StartCoroutine(WaitAndDestroy(deathAnimationTime));
+    }
+
+    IEnumerator WaitAndDestroy(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 
     IEnumerator WaitForAttackAnimation(float delay)
@@ -114,5 +153,31 @@ public class FlyingEnemy : MonoBehaviour
         Vector3 newRotation = transform.eulerAngles;
         newRotation.y += 180f;
         transform.eulerAngles = newRotation;
+    }
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        // Check if collided with the ground
+        if ((IsInLayerMask(other.gameObject.layer, groundLayer) && _dead))
+        {
+            _rigidbody.isKinematic = true;
+            _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+
+        if (Time.time - lastAttackTime >= attackCooldown)
+        {
+            if ((IsInLayerMask(other.gameObject.layer, playerLayer) && !_dead))
+            {
+                other.gameObject.GetComponent<DamageFlash>()?.FlashDamage();
+                PlayerStats playerStats = other.gameObject.GetComponent<PlayerStats>();
+                playerStats.health -= damage;
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+
+    private bool IsInLayerMask(int layer, LayerMask layerMask)
+    {
+        return layerMask == (layerMask | (1 << layer));
     }
 }

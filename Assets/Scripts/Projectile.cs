@@ -39,6 +39,9 @@ public class Projectile : MonoBehaviour
             _anim.SetTrigger(ProjectileImpact);
             StartCoroutine(DestroyAfterAnimation());
 
+            //Player Damage Flash
+            other.gameObject.GetComponent<DamageFlash>()?.FlashDamage();
+
         }
         // Check if the collided object belongs to one of the ImpactLayers
         else if (IsInLayerMask(other.gameObject.layer, impactLayers) && isAlive)

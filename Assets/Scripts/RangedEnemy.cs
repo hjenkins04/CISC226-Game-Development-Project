@@ -36,16 +36,31 @@ public class RangedEnemy : MonoBehaviour
     [Tooltip("The player layer")]
     [SerializeField] public LayerMask playerLayer;
 
+    [Header("Death Properties")]
+    [Tooltip("Death Animation Duration")]
+    [SerializeField] public float deathAnimationTime = 4f;
+
     private float _nextFireTime;
     private bool _throwing = false;
     private bool _foundPlayer = false;
+    private bool _dead = false;
+    private Rigidbody2D _rigidbody;
 
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody2D>();
+    }
 
     void Update()
     {
         _anim.SetBool("Throwing", _throwing);
         _anim.SetBool("Patroling",!_foundPlayer);
-        CheckForPlayer();
+        _anim.SetBool("Dead", _dead);
+
+        if (!_dead)
+        {
+            CheckForPlayer();
+        }
 
         if (_foundPlayer)
         {
@@ -82,6 +97,23 @@ public class RangedEnemy : MonoBehaviour
         {
             Flip();
         }
+    }
+
+    public void DeathSequence()
+    {
+        _dead = true;
+        _anim.SetTrigger("Die");
+        _rigidbody.isKinematic = true;
+        _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+
+        StartCoroutine(WaitAndDestroy(deathAnimationTime));
+    }
+
+    IEnumerator WaitAndDestroy(float delay)
+    {
+        // Wait for the defined duration
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 
     IEnumerator FireProjectileAfterAnimation(float delay)

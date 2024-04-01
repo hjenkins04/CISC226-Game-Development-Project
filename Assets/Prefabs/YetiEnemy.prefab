@@ -77,6 +77,7 @@ GameObject:
   - component: {fileID: 7196181678350135406}
   - component: {fileID: 9077993445498329803}
   - component: {fileID: 8772840541019261720}
+  - component: {fileID: 3534959240715051105}
   m_Layer: 0
   m_Name: YetiEnemy
   m_TagString: Enemy
@@ -121,7 +122,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: aa0a6eb8cefd98f49ad4e0fa191e0474, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -254,6 +255,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
+  deathAnimationTime: 4
 --- !u!95 &9077993445498329803
 Animator:
   serializedVersion: 5
@@ -291,3 +293,59 @@ MonoBehaviour:
   health: 3
   coinDrop: 3
   enemy: {fileID: 4696408720733241384}
+--- !u!114 &3534959240715051105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4696408720733241384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddd8f7a8ef0f600479ac2c1f5ddaebfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _FlashColor: {r: 5.656854, g: 5.656854, b: 5.656854, a: 1}
+  _FlashTime: 0.25
+  _FlashSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.49899262
+      value: 0.50176054
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.837222
+      value: -0.7826361
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.1989413
+      value: 1.7832347
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.4949752
+      value: 0.5150543
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

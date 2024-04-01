@@ -28,6 +28,9 @@ public class weaponDamage : MonoBehaviour
 
             enemyStats.health = enemyStats.health - damage;
 
+            //Enemy Damage Flash
+            other.gameObject.GetComponent<DamageFlash>()?.FlashDamage();
+
             _rb = other.GetComponent<Rigidbody2D>();
 
             Vector2 directionToYeti = transform.position - player.transform.position;

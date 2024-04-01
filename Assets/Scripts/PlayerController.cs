@@ -353,7 +353,6 @@ namespace FrostFalls
                 _joint.maxDistanceOnly = true;
             }
 
-
             // Fix upwards float glitch after jumping from wall
             //if (!_walled && (_isWallClimbing || _isWallSliding))
             if (!_walled && _hasPickaxe)
@@ -774,6 +773,7 @@ namespace FrostFalls
         private bool _boostToConsume; // Indicates a boost that needs to be processed
         private bool _stopBoostToConsume; // Indicates a boost release that needs to be processed
         private bool _boostActive = false; // Boost is currently active conditions are met
+ 
         /// <summary>
         /// Allows a boost if the boost is available and the key has been pressed
         /// </summary>
@@ -851,6 +851,8 @@ namespace FrostFalls
 
         #region Dash
         private bool _dashToConsume; // Indicates a dash that needs to be processed
+        private bool _isDashing = false; // If the palyer is currently dashing
+        private Vector2 _dashDirection;
         /// <summary>
         /// Allows a dash if the dash is available and the key has been pressed
         /// </summary>
@@ -869,10 +871,38 @@ namespace FrostFalls
         private void ApplyDashForce()
         {
             Debug.Log("DASH");
+
+            // Normalize the input direction to ensure consistent dash speed regardless of input magnitude
+            _dashDirection = new Vector2(_frameInput.Move.x, _frameInput.Move.x / 3).normalized; // Using horizontal input only
+
+            // If you want to include vertical dashing, you might not normalize or include the Y component
+            // Vector2 dashDirection = _frameInput.Move.normalized; // For both horizontal and vertical
+
+            Vector2 dashForce = _dashDirection * DashForce;
+            _frameVelocity = new Vector2(dashForce.x, dashForce.y); // Apply dash force directly to velocity
+
             DashEffect.transform.rotation = direction.rotation;
-            _rb.AddForce(direction.up * DashForce, ForceMode2D.Impulse);
             DashEffect.Play();
+            _isDashing = true;
             _currentDashWaitTime = _time;
+
+            // Set a timer to end the dash effect, making the player able to dash again after the cooldown
+            StartCoroutine(ContinuousDashEffect());
+        }
+
+        private IEnumerator ContinuousDashEffect()
+        {
+            float dashEndTime = Time.time + 0.5f;
+            while (Time.time < dashEndTime)
+            {
+                // Apply continuous force
+                Vector2 dashForce = _dashDirection * DashForce;
+                if (!_isGrappling) dashForce = ((_dashDirection * DashForce) * 0.75f);
+                _frameVelocity = new Vector2(dashForce.x, dashForce.y);
+
+                yield return new WaitForFixedUpdate();
+            }
+            _isDashing = false;
         }
         #endregion
 
@@ -883,7 +913,7 @@ namespace FrostFalls
         /// </summary>
         private void HandleDirection()
         {
-            if (_boostActive) return;
+            if (_boostActive || _isDashing) return;
 
             if (_isGrappling)
             {
@@ -958,7 +988,6 @@ namespace FrostFalls
         //private void ApplyMovement() => _rb.velocity = _frameVelocity;
         private void ApplyMovement()
         {
-            //_frameVelocity.y = _frameInput.Move.y;
             _rb.velocity = new Vector2(_frameVelocity.x, _frameVelocity.y);
         }
 

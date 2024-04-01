@@ -12,8 +12,12 @@ public class Weapon : MonoBehaviour
 
     private bool isRight;
     private Quaternion initialRotation;
-    
-    // Start is called before the first frame update
+
+    // Cooldown
+    public float cooldownDuration = 2f;
+    private float nextActivationTime = 0f;
+
+
     void Start()
     {
         tr.emitting = false;
@@ -21,11 +25,12 @@ public class Weapon : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && Time.time >= nextActivationTime)
         {
+            nextActivationTime = Time.time + cooldownDuration;
+
             //Start rotation is pointed at mouse
             // Get the mouse position in screen space
             Vector3 mousePosition = Input.mousePosition;

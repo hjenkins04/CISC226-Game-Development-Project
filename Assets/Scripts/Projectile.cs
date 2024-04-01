@@ -16,6 +16,10 @@ public class Projectile : MonoBehaviour
     [SerializeField] private LayerMask playerLayer;
     [Tooltip("All layers that the projectile should impact")]
     [SerializeField]  private LayerMask impactLayers;
+    [Tooltip("Projectile damage")]
+    [SerializeField] public float damage;
+
+    private bool isAlive = true;
 
     void Start()
     {
@@ -24,18 +28,23 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (IsInLayerMask(other.gameObject.layer, playerLayer))
+        // Check if the collided object is the player layer
+        if (IsInLayerMask(other.gameObject.layer, playerLayer) && isAlive)
         {
-            // TODO handle player impact
+            isAlive = false;
+            // handle player impact
+            PlayerStats playerStats = other.GetComponent<PlayerStats>();
+            playerStats.health = playerStats.health - damage;
+
             _anim.SetTrigger(ProjectileImpact);
             StartCoroutine(DestroyAfterAnimation());
 
         }
         // Check if the collided object belongs to one of the ImpactLayers
-        else if (IsInLayerMask(other.gameObject.layer, impactLayers))
+        else if (IsInLayerMask(other.gameObject.layer, impactLayers) && isAlive)
         {
+            isAlive = false;
             _anim.SetTrigger(ProjectileImpact);
-            StartCoroutine(DestroyAfterAnimation());
             StartCoroutine(DestroyAfterAnimation());
         }
     }

@@ -224,7 +224,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 4
 --- !u!114 &7196181678350135406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
     m_Bits: 704
   groundDetectionPoint: {fileID: 8608159682074511736}
   groundDetectionDistance: 2
-  player: {fileID: 0}
+  player: {fileID: 7794893154794589268, guid: 9b3efc9db52c2f34389bba4af28811ad, type: 3}
   projectileSpeed: 8
   fireRate: 0.3
   throwDelay: 1

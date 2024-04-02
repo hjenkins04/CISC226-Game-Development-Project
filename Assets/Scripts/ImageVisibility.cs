@@ -10,6 +10,7 @@ public class ProximityInteraction : MonoBehaviour
     public Transform chestTransform;
     public float proximityDistance = 3f;
     public Image displayImage; // Reference to the UI Image
+    public Image displayBtn;
 
     public bool interactable;
 
@@ -17,6 +18,10 @@ public class ProximityInteraction : MonoBehaviour
     {
         interactable = false;
         displayImage.enabled = false; // Initially hide the image
+        if (displayBtn != null)
+        {
+            displayBtn.enabled = false;
+        }
     }
 
     void Update()
@@ -31,6 +36,11 @@ public class ProximityInteraction : MonoBehaviour
                 // Show the image
                 displayImage.enabled = true;
 
+                if (displayBtn != null) 
+                { 
+                    displayBtn.enabled = true; 
+                }
+
                 // Check for player interaction
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -42,6 +52,11 @@ public class ProximityInteraction : MonoBehaviour
             {
                 // Hide the image
                 displayImage.enabled = false;
+
+                if (displayBtn != null)
+                {
+                    displayBtn.enabled = false;
+                }
 
                 // Optionally, reset interactable state when the player is far away
                 if (distanceToPlayer > 20f)

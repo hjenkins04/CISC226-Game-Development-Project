@@ -296,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   detectionRange: 15
-  attackRange: 2
+  attackRange: 3
   isPatrolling: 1
   playerHead: {fileID: 0}
   batDivePosition: {fileID: 0}

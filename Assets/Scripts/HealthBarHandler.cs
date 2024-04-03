@@ -18,7 +18,7 @@ public class HealthBarHandler : MonoBehaviour
             {
                 // Get player health from the PlayerController script
                 float playerHealth = playerStats.health;
-                
+                playerHealth = Mathf.Clamp(playerHealth, 0f, playerStats.maxHealth);
                 // Update the slider value with the player's health
                 if (healthSlider != null)
                 {

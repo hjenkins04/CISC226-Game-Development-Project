@@ -1,34 +1,64 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using FrostFalls;
 
 public class PlayerStats : MonoBehaviour
 {
     public float maxHealth;
     public float health;
 
+    public TextMeshProUGUI coinText;
+    public float deathAnimationDuration = 1.5f;
     public float coins = 0;
+    public PlayerController playerController;
     public GameObject checkpointContollerObject;
     private CheckpointController checkpointController;
-    // Start is called before the first frame update
+    private Animator _anim;
+
+
     void Start()
     {
-        checkpointController = checkpointContollerObject.GetComponent<CheckpointController>();
         health = maxHealth;
+        checkpointController = checkpointContollerObject.GetComponent<CheckpointController>();
+        _anim = GetComponentInChildren<Animator>();
+        playerController = GetComponent<PlayerController>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        if(health == 0)
+        _anim.SetBool("Dead", playerController.IsPlayerDead);
+
+        if (health <= 0 && !playerController.IsPlayerDead)
         {
-            die();
+            StartCoroutine(DieAfterAnimation());
+        }
+
+        int coinsInt = (int)coins;
+
+        if (coinText != null){
+            coinText.text = coinsInt.ToString();
         }
     }
 
-    private void die()
+    IEnumerator DieAfterAnimation()
+    {
+        _anim.SetTrigger("Die");
+
+        playerController.IsPlayerDead = true;
+
+        // Wait for death animation to complete
+        yield return new WaitForSeconds(deathAnimationDuration);
+
+        Die();
+    }
+
+    private void Die()
     {
         //respawn at checkpoint
+        playerController.IsPlayerDead = false;
         checkpointController.RespawnAtLatestCheckpoint();
 
         coins = 0;

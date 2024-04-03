@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class RangedEnemy : MonoBehaviour
 {
@@ -37,7 +36,7 @@ public class RangedEnemy : MonoBehaviour
     [Tooltip("The player layer")]
     [SerializeField] public LayerMask playerLayer;
 
-    [Header("Death Properties00")]
+    [Header("Death Properties")]
     [Tooltip("Death Animation Duration")]
     [SerializeField] public float deathAnimationTime = 4f;
 
@@ -46,7 +45,6 @@ public class RangedEnemy : MonoBehaviour
     private bool _foundPlayer = false;
     private bool _dead = false;
     private Rigidbody2D _rigidbody;
-
 
     private void Awake()
     {
@@ -62,23 +60,24 @@ public class RangedEnemy : MonoBehaviour
         if (!_dead)
         {
             CheckForPlayer();
-            if (_foundPlayer)
-            {
-                FacePlayer();
+        }
 
-                if (Time.time >= _nextFireTime && !_throwing)
-                {
-                    _nextFireTime = Time.time + 1f / fireRate;
-                    _anim.SetTrigger(YetiThrow);
-                    StartCoroutine(FireProjectileAfterAnimation(throwDelay));
-                    _throwing = true;
-                }
-            }
-            else
+        if (_foundPlayer)
+        {
+            FacePlayer();
+
+            if (Time.time >= _nextFireTime && !_throwing)
             {
-                Move();
-                CheckForEdgeOrObstacle();
+                _nextFireTime = Time.time + 1f / fireRate;
+                _anim.SetTrigger(YetiThrow);
+                StartCoroutine(FireProjectileAfterAnimation(throwDelay));
+                _throwing = true;
             }
+        }
+        else
+        {
+            Move();
+            CheckForEdgeOrObstacle();
         }
     }
 
@@ -99,6 +98,7 @@ public class RangedEnemy : MonoBehaviour
             Flip();
         }
     }
+
     public void DeathSequence()
     {
         _dead = true;

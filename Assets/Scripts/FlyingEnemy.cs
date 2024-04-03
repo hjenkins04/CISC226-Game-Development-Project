@@ -31,6 +31,10 @@ public class FlyingEnemy : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask playerLayer;
 
+    [SerializeField] public float damage = 3f;
+    [SerializeField] private float attackCooldown = 1.5f;
+    private float lastAttackTime = 0f;
+
     private bool _dead = false;
     private Rigidbody2D _rigidbody;
 
@@ -38,6 +42,7 @@ public class FlyingEnemy : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
     }
+
     void Start()
     {
         CreateMovementColliders();
@@ -46,13 +51,12 @@ public class FlyingEnemy : MonoBehaviour
         aiPath.enabled = false;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         _anim.SetBool("Dead", _dead);
-
-
-        if (!_dead) {
+        if (!_dead)
+        {
             if (Vector2.Distance(transform.position, player.position) <= detectionRange && isPatrolling)
             {
                 isPatrolling = false;
@@ -60,7 +64,6 @@ public class FlyingEnemy : MonoBehaviour
                 aiPath.enabled = true;
                 gameObject.GetComponent<AIDestinationSetter>().target = playerHead;
             }
-
             if (isPatrolling)
             {
                 transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
@@ -85,14 +88,13 @@ public class FlyingEnemy : MonoBehaviour
         aiPath.enabled = false;
         _anim.SetTrigger("Die");
         _rigidbody.isKinematic = false;
-        _rigidbody.AddForce(new Vector2(0, -15), ForceMode2D.Impulse);
+        _rigidbody.AddForce(new Vector2(0, -30), ForceMode2D.Impulse);
 
         StartCoroutine(WaitAndDestroy(deathAnimationTime));
     }
 
     IEnumerator WaitAndDestroy(float delay)
     {
-        // Wait for the defined duration
         yield return new WaitForSeconds(delay);
         Destroy(gameObject);
     }
@@ -117,26 +119,6 @@ public class FlyingEnemy : MonoBehaviour
         // Set attacking to false and change the target back to playerHead
         attacking = false;
         gameObject.GetComponent<AIDestinationSetter>().target = playerHead;
-    }
-
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        // Check if collided with the ground
-        if ((IsInLayerMask(other.gameObject.layer, groundLayer) && _dead))
-        {
-            _rigidbody.isKinematic = true;
-            _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-        }
-
-        // Check if collided with player
-        if (IsInLayerMask(other.gameObject.layer, playerLayer) && !_dead)
-        {
-            //Player Damage Flash
-            other.gameObject.GetComponent<DamageFlash>()?.FlashDamage();
-
-            // Call the DecreaseHealth()
-            //other.gameObject.GetComponent<PlayerHealth>()?.TakeDamage(damageAmount);
-        }
     }
 
     void FacePlayer()
@@ -173,7 +155,27 @@ public class FlyingEnemy : MonoBehaviour
         transform.eulerAngles = newRotation;
     }
 
-    // Helper method to check if a layer is within a given LayerMask
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        // Check if collided with the ground
+        if ((IsInLayerMask(other.gameObject.layer, groundLayer) && _dead))
+        {
+            _rigidbody.isKinematic = true;
+            _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+
+        if (Time.time - lastAttackTime >= attackCooldown)
+        {
+            if ((IsInLayerMask(other.gameObject.layer, playerLayer) && !_dead))
+            {
+                other.gameObject.GetComponent<DamageFlash>()?.FlashDamage();
+                PlayerStats playerStats = other.gameObject.GetComponent<PlayerStats>();
+                playerStats.health -= damage;
+                lastAttackTime = Time.time;
+            }
+        }
+    }
+
     private bool IsInLayerMask(int layer, LayerMask layerMask)
     {
         return layerMask == (layerMask | (1 << layer));

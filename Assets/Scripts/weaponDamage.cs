@@ -5,29 +5,25 @@ using UnityEngine;
 public class weaponDamage : MonoBehaviour
 {
     public float damage = 1;
-
     public float knockbackForce;
+    public float jumpForce = 3f;
+
     public GameObject player;
-    // Start is called before the first frame update
+
+    Rigidbody2D _rb;
+
     void Start()
     {
-        
+        _rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    // OnTriggerEnter is called when the Collider other enters the trigger
     void OnTriggerEnter2D(Collider2D other)
     {
         
         // Check if the trigger collision involves the enemy
         if (other.gameObject.CompareTag("Enemy"))
         {
-
+            //Debug.Log("Enemy Hit");
             EnemyStats enemyStats = other.GetComponent<EnemyStats>();
 
             enemyStats.health = enemyStats.health - damage;
@@ -35,9 +31,13 @@ public class weaponDamage : MonoBehaviour
             //Enemy Damage Flash
             other.gameObject.GetComponent<DamageFlash>()?.FlashDamage();
 
-            //FIX
-            Vector2 knockback = other.transform.position - player.transform.position;
-            other.GetComponent<Rigidbody2D>().AddForce(knockback * knockbackForce, ForceMode2D.Impulse);
+            _rb = other.GetComponent<Rigidbody2D>();
+
+            Vector2 directionToYeti = transform.position - player.transform.position;
+            directionToYeti.Normalize();
+
+            Vector2 knockback = new Vector2(directionToYeti.x * knockbackForce, jumpForce);
+            _rb.velocity = knockback;
         }
     }
 }

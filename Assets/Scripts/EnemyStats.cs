@@ -22,6 +22,7 @@ public class EnemyStats : MonoBehaviour
         _FlyingEnemy = GetComponent<FlyingEnemy>();
 
     }
+
     void Start()
     {
         health = maxHealth;
@@ -51,17 +52,9 @@ public class EnemyStats : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No RangedEnemy or FlyingEnemy component attached");
+            Debug.LogError("No RangedEnemy or FlyingEnemy component is attached to the object");
         };
         //Drop coins
-        PlayerStats playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
-        if (playerStats != null)
-        {
-            playerStats.coins += coinDrop;
-        }
-        else
-        {
-            Debug.LogWarning("PlayerStats component not found");
-        }
+        GameObject.Find("Player").GetComponent<PlayerStats>().coins += coinDrop;
     }
 }

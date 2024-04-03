@@ -173,6 +173,7 @@ MonoBehaviour:
   impactLayers:
     serializedVersion: 2
     m_Bits: 704
+  damage: 5
 --- !u!95 &7143789732646942413
 Animator:
   serializedVersion: 5

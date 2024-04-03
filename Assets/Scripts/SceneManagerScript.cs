@@ -9,6 +9,8 @@ public class SceneManagerScript : MonoBehaviour
     public void LoadScene(string sceneName){
         if (!ControlsMenu.controlVisible && !SettingsMenu.settingVisible ){
             SceneManager.LoadScene(sceneName);
+            // uncomment below once certain nohting causing error
+            Time.timeScale = 1f;
         }
         
     }

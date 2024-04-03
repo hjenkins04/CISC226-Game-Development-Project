@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Net.Sockets;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.UIElements.Experimental;
-using static UnityEditor.Experimental.GraphView.GraphView;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace FrostFalls
@@ -232,7 +230,7 @@ namespace FrostFalls
         {
             // Update time and gather player input for each frame
             _time += Time.deltaTime;
-            if (_ignorePlayerInput != true) //Gather player input aslong it's expected
+            if (_ignorePlayerInput != true && !IsPlayerDead) //Gather player input aslong it's expected
             {
                 GatherInput();
             }
@@ -254,7 +252,16 @@ namespace FrostFalls
             if (IsPlayerDead)
             {
                 _ignorePlayerInput = true;
+                if (!_grounded)
+                {
+                    _frameVelocity = new Vector2(0, -5);
+                }
+                else
+                {
+                    _frameVelocity = new Vector2(0, 0);
+                }
                 //_rb.constraints = RigidbodyConstraints2D.FreezeAll;
+                if (_isGrappling) StopGrapple();
             }
             if (!IsPlayerDead) _ignorePlayerInput = false;
         }

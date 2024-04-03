@@ -15,7 +15,7 @@ public class Pause : MonoBehaviour
     void Update()
     {
         // Check for the pause key (Escape in this example) being pressed
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKey(KeyCode.P))
         {
             TogglePause();
         }

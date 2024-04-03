@@ -23,7 +23,8 @@ public class ControlsMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)){
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKey(KeyCode.P))
+        {
             if (controlVisible == true){
                Panel.SetActive(false);
                controlVisible = false;

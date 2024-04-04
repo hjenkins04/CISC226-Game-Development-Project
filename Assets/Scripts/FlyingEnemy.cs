@@ -20,7 +20,7 @@ public class FlyingEnemy : MonoBehaviour
     public bool attacking = false;
     private bool following = false;
     [SerializeField] public float attackDelay;
-    
+
     [SerializeField] public GameObject enemyMovementColliderPrefab;
     private GameObject leftCollider;
     private GameObject rightCollider;
@@ -57,6 +57,7 @@ public class FlyingEnemy : MonoBehaviour
 
     void Update()
     {
+        _anim.SetBool("Attacking", attacking);
         _anim.SetBool("Dead", _dead);
         if (!_dead)
         {
@@ -77,7 +78,6 @@ public class FlyingEnemy : MonoBehaviour
                 if (Vector2.Distance(transform.position, playerHead.position) <= attackRange && !attacking)
                 {
                     attacking = true;
-                    _anim.SetTrigger("BatAttack");
                     StartCoroutine(WaitForAttackAnimation(attackDelay));
 
                     StartCoroutine(WaitForBatDivePosition(batDivePosition));
@@ -112,6 +112,7 @@ public class FlyingEnemy : MonoBehaviour
 
         // Set the destination to batDivePosition after the delay
         gameObject.GetComponent<AIDestinationSetter>().target = batDivePosition;
+        attacking = false;
     }
 
     IEnumerator WaitForBatDivePosition(Transform batDivePosition)
@@ -123,7 +124,6 @@ public class FlyingEnemy : MonoBehaviour
         }
 
         // Set attacking to false and change the target back to playerHead
-        attacking = false;
         gameObject.GetComponent<AIDestinationSetter>().target = playerHead;
     }
 
@@ -145,7 +145,8 @@ public class FlyingEnemy : MonoBehaviour
         transform.localScale = theScale;
     }
 
-    void CreateMovementColliders() {
+    void CreateMovementColliders()
+    {
         GameObject colliderParent = GameObject.Find("MovementColliders");
 
         Vector3 leftPosition = transform.position - transform.right * horizontalOffset + Vector3.up * verticalOffset;
@@ -155,7 +156,8 @@ public class FlyingEnemy : MonoBehaviour
         rightCollider = Instantiate(enemyMovementColliderPrefab, rightPosition, Quaternion.identity, colliderParent.transform);
     }
 
-    public void RotateEnemy() {
+    public void RotateEnemy()
+    {
         Vector3 newRotation = transform.eulerAngles;
         newRotation.y += 180f;
         transform.eulerAngles = newRotation;

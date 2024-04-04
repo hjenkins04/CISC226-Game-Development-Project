@@ -37,6 +37,9 @@ public class FlyingEnemy : MonoBehaviour
 
     private bool _dead = false;
     private Rigidbody2D _rigidbody;
+    public CapsuleCollider2D collider;
+    public CapsuleCollider2D collider2;
+    public CircleCollider2D collider3;
 
     private void Awake()
     {
@@ -85,6 +88,9 @@ public class FlyingEnemy : MonoBehaviour
     public void DeathSequence()
     {
         _dead = true;
+        collider.enabled = false;
+        collider2.enabled = false;
+        collider3.enabled = false;
         aiPath.enabled = false;
         _anim.SetTrigger("Die");
         _rigidbody.isKinematic = false;
@@ -126,7 +132,7 @@ public class FlyingEnemy : MonoBehaviour
         float directionToPlayer = player.position.x - transform.position.x;
 
         // Flip only if the player is on the opposite side from the facing direction
-        if ((directionToPlayer > 0 && transform.localScale.x > 0) || (directionToPlayer < 0 && transform.localScale.x < 0))
+        if ((_dead == false) && (directionToPlayer > 0 && transform.localScale.x > 0) || (directionToPlayer < 0 && transform.localScale.x < 0))
         {
             Flip();
         }

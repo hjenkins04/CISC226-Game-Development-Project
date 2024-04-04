@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -6.53, y: -10.97, z: 0}
-  m_LocalScale: {x: 4.934983, y: 4.934983, z: 4.934983}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 293406305021369513}
@@ -173,7 +173,7 @@ MonoBehaviour:
   impactLayers:
     serializedVersion: 2
     m_Bits: 704
-  damage: 5
+  damage: 2.5
 --- !u!95 &7143789732646942413
 Animator:
   serializedVersion: 5

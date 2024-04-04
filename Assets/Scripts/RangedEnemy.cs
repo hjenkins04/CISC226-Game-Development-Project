@@ -40,6 +40,8 @@ public class RangedEnemy : MonoBehaviour
     [Tooltip("Death Animation Duration")]
     [SerializeField] public float deathAnimationTime = 4f;
 
+    public BoxCollider2D collider;
+
     private float _nextFireTime;
     private bool _throwing = false;
     private bool _foundPlayer = false;
@@ -93,7 +95,7 @@ public class RangedEnemy : MonoBehaviour
         float directionToPlayer = player.position.x - transform.position.x;
 
         // Flip only if the player is on the opposite side from the facing direction
-        if ((directionToPlayer > 0 && transform.localScale.x > 0) || (directionToPlayer < 0 && transform.localScale.x < 0))
+        if ((_dead == false) && (directionToPlayer > 0 && transform.localScale.x > 0) || (directionToPlayer < 0 && transform.localScale.x < 0))
         {
             Flip();
         }
@@ -102,6 +104,7 @@ public class RangedEnemy : MonoBehaviour
     public void DeathSequence()
     {
         _dead = true;
+        collider.enabled = false;
         _anim.SetTrigger("Die");
         _rigidbody.isKinematic = true;
         _rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
@@ -125,11 +128,13 @@ public class RangedEnemy : MonoBehaviour
 
     void FireProjectile()
     {
-        Vector2 direction = (player.position - projectileSpawnPoint.position).normalized;
-        GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+        if(!_dead) { 
+            Vector2 direction = ((player.position + new Vector3(0, 1f, 0)) - projectileSpawnPoint.position).normalized;
+            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
 
-        Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-        rb.velocity = direction * projectileSpeed;
+            Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+            rb.velocity = direction * projectileSpeed;
+        }
     }
 
     void CheckForPlayer()

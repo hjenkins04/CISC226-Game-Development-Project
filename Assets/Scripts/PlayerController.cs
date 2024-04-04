@@ -823,6 +823,8 @@ namespace FrostFalls
             Vector2 boostDirection = Vector2.zero; // Default direction
             float angleOffset = 0; // Used to adjust the boost effect's orientation
 
+            
+
             if (hasHorizontalInput)
             {
                 // Calculate boost direction based on input for rotation around the grapple point
@@ -841,9 +843,11 @@ namespace FrostFalls
             // Apply the boost force in the determined direction
             _frameVelocity = boostDirection * BoostForce + new Vector2(0, _rb.velocity.y);
 
+            float rawHorizontalInput = Input.GetAxisRaw("Horizontal");
+
             // Correctly orient the boost effect based on the action
-            float effectAngle = Mathf.Atan2(boostDirection.y, boostDirection.x) * Mathf.Rad2Deg;
-            BoostEffect.transform.rotation = Quaternion.Euler(0, 0, effectAngle + angleOffset);
+            float effectAngle = Mathf.Atan2(boostDirection.y, boostDirection.x) * Mathf.Rad2Deg + 90;
+            BoostEffect.transform.rotation = Quaternion.Euler(0, 0, effectAngle + rawHorizontalInput);
 
             // Handle boost deactivation
             if (_stopBoostToConsume || _stopGrappleToConsume)

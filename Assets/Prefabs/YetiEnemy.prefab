@@ -247,15 +247,16 @@ MonoBehaviour:
   groundDetectionPoint: {fileID: 8608159682074511736}
   groundDetectionDistance: 2
   player: {fileID: 7794893154794589268, guid: 9b3efc9db52c2f34389bba4af28811ad, type: 3}
-  projectileSpeed: 8
+  projectileSpeed: 16
   fireRate: 0.3
   throwDelay: 1
   moveSpeed: 2
-  detectionRadius: 10
+  detectionRadius: 25
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
   deathAnimationTime: 4
+  collider: {fileID: 4888612756332803356}
 --- !u!95 &9077993445498329803
 Animator:
   serializedVersion: 5

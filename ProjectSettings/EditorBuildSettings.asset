@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Credits.unity
     guid: d12f3399ddb1f0944a54cda9f6fc1376
   - enabled: 1
+    path: Assets/Scenes/Tutorial Level.unity
+    guid: c5506bcb92edd8a4f8062fbe5872240f
+  - enabled: 1
     path: Assets/Scenes/Level Design.unity
     guid: fac001630ded2884f851268480b82bf8
   - enabled: 0

@@ -61,7 +61,7 @@ public class PlayerStats : MonoBehaviour
         playerController.IsPlayerDead = false;
         checkpointController.RespawnAtLatestCheckpoint();
 
-        coins = 0;
+        //coins = 0;
         health = maxHealth;
     }
 }

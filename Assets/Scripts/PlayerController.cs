@@ -193,6 +193,7 @@ namespace FrostFalls
         public event Action WallClimbed;
         public event Action WallJumped;
         public event Action LedgeClimb;
+        public bool Dead => IsPlayerDead;
 
         // Elapsed time
         private float _time;
@@ -1050,6 +1051,7 @@ namespace FrostFalls
         event Action WallClimbed; // Event triggered when the player wall climbs
         event Action WallJumped; // Event triggered when the player wall jumps
         event Action LedgeClimb; // Event triggered when the player ledge climbs
+        bool Dead { get; }// Indicates if the player is dead
         Vector2 FrameInput { get; } // Current frame's input vector
     }
 

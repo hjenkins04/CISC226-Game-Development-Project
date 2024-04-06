@@ -11,7 +11,6 @@ public class ProximityInteraction : MonoBehaviour
     public float proximityDistance = 3f;
     public Image displayImage; // Reference to the UI Image
     public Image displayBtn;
-    public List<GameObject> optionalChildObjects; // Optional child objects
 
     public bool interactable;
 
@@ -22,15 +21,6 @@ public class ProximityInteraction : MonoBehaviour
         if (displayBtn != null)
         {
             displayBtn.enabled = false;
-        }
-
-        // Initially disable all optional child objects
-        foreach (var child in optionalChildObjects)
-        {
-            if (child != null)
-            {
-                child.SetActive(false);
-            }
         }
     }
 
@@ -51,15 +41,6 @@ public class ProximityInteraction : MonoBehaviour
                     displayBtn.enabled = true; 
                 }
 
-                // Enable all optional child objects
-                foreach (var child in optionalChildObjects)
-                {
-                    if (child != null)
-                    {
-                        child.SetActive(true);
-                    }
-                }
-
                 // Check for player interaction
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -75,15 +56,6 @@ public class ProximityInteraction : MonoBehaviour
                 if (displayBtn != null)
                 {
                     displayBtn.enabled = false;
-                }
-
-                // Disable all optional child objects
-                foreach (var child in optionalChildObjects)
-                {
-                    if (child != null)
-                    {
-                        child.SetActive(false);
-                    }
                 }
 
                 // Optionally, reset interactable state when the player is far away

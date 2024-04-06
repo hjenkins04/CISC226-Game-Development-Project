@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace FrostFalls
@@ -19,9 +18,6 @@ namespace FrostFalls
         [SerializeField] private ParticleSystem _launchParticles;
         [SerializeField] private ParticleSystem _moveParticles;
         [SerializeField] private ParticleSystem _landParticles;
-
-        [Header("Trail")]
-        [SerializeField] private TrailRenderer _trailRenderer;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip[] _footsteps;
@@ -65,21 +61,6 @@ namespace FrostFalls
         private void Update()
         {
             if (_player == null) return;
-
-            if (_player.Dead)
-            {
-                if (_trailRenderer.enabled)
-                {
-                    _trailRenderer.enabled = false;
-                }
-            }
-            else
-            {
-                if (!_trailRenderer.enabled)
-                {
-                    _trailRenderer.enabled = true;
-                }
-            }
 
             HandleSpriteFlip();
             HandleIdleSpeed();
@@ -170,7 +151,7 @@ namespace FrostFalls
             if (grounded)
             {
                 _anim.SetTrigger(GroundedKey);
-                _source.PlayOneShot(_footsteps[UnityEngine.Random.Range(0, _footsteps.Length)]);
+                _source.PlayOneShot(_footsteps[Random.Range(0, _footsteps.Length)]);
                 _moveParticles.Play();
                 _landParticles.Play();
             }

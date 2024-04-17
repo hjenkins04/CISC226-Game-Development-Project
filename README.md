@@ -12,7 +12,6 @@
   <p align="center"> CISC-226 Game Development Project</p>
   <p align="center">
     <a href="https://hjenkins2004.itch.io/frostfall2d">Play The Game</a>
-    <a href="./Documentation/Final-Video-Demo.mp4">View Demo Preview</a>
   </p>
 </p>
 
